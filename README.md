@@ -16,5 +16,5 @@ Parallelism is beneficial mainly for large SVD decompositions, which is the main
 Speedup will only be obtained if the product of ththe bond dimension and the local Hilbert space dimension are sufficiently large.  
 
 ## References
-1. Schollwöck, U., 2011. The density-matrix renormalization group in the age of matrix product states. _Annals of Physics_, 326(1), pp.96-192.
-2.Verstraete, F., Murg, V. and Cirac, J.I., 2008. Matrix product states, projected entangled pair states, and variational renormalization group methods for quantum spin systems. _Advances in Physics_, 57(2), pp.143-224.
+1. Schollwöck, U., 2011. The density-matrix renormalization group in the age of matrix product states. _Annals of Physics_, 326(1), pp.96-192
+2. Verstraete, F., Murg, V. and Cirac, J.I., 2008. Matrix product states, projected entangled pair states, and variational renormalization group methods for quantum spin systems. _Advances in Physics_, 57(2), pp.143-224.

@@ -13,8 +13,8 @@ If your GPU supports __CUDA__, you may try to speed up calculations by copying M
 Functions `sweep`, `canonize`, `apply`, `contract` can work with objects distributed  on the GPU.
 The other functions may not work, and one has to `gather` them back on the local workspace.  
 Parallelism is beneficial mainly for large SVD decompositions, which is the main bottleneck.
-Speedup will only be  obtained if the bond dimension, or the local Hilbert space are sufficiently large.  
+Speedup will only be obtained if the product of ththe bond dimension and the local Hilbert space dimension are sufficiently large.  
 
 ## References
-1. U. Schollwöck. The density-matrix renormalization group in the age of matrix product states. _Annals of Physics_ 326.1 (2011): 96-192.  
-2. F. Verstraete, J. J. Garcia-Ripoll and J. I. Cirac. Matrix product density operators: simulation of finite-temperature and dissipative systems. _Physical Review Letters_ 93.20 (2004): 207204.
+1. Schollwöck, U., 2011. The density-matrix renormalization group in the age of matrix product states. _Annals of Physics_, 326(1), pp.96-192.
+2.Verstraete, F., Murg, V. and Cirac, J.I., 2008. Matrix product states, projected entangled pair states, and variational renormalization group methods for quantum spin systems. _Advances in Physics_, 57(2), pp.143-224.

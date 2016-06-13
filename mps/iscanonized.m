@@ -1,6 +1,16 @@
 function s = iscanonized(mps,direction,varargin)
+% Checks if an MPS is canonized along the direction specified. Optional 
+% argument specifies the distance from the identity matrix which is
+% acceptable for each site.
+%
+% INPUT
+%   mps:        cell-array of rank-3 tensors representing the MPS 
+%   direction:  specifies left (-1) or right (+1) canonization
+%   tolerance:  (optional) acceptable error in distance from identity
+% OUTPUT
+%   s:          boolean which is set to true if condition is met
 
-tolerance = 1e-4;
+tolerance = 1e-6;
 if ~isempty(varargin)
     tolerance = varargin{1};
 end

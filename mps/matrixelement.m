@@ -2,7 +2,15 @@ function melem = matrixelement(mps_1,mpo,mps_2)
 % Returns the matrix element < MPS_1 | MPO | MPS_2 > that runs in
 % polynomial time.
 % The inputs are cell arrays corresponding to MPS decompositions.
-% Notice that no check on correct sizes is done.
+% User should be warned that there is no check on correct sizes.
+%
+% INPUT
+%   mps_1, mps_2:   cell-array representations of MPSs to contract, each
+%                   element is a rank-3 tensor with index convention
+%                   (bond,bond,physical)
+% OUTPUT
+%   melem:          scalar (hopefully, but not guaranteed) corresponding to
+%                   the matrix element
 
 N = length(mps_1);
 d = size(mps_1{1},3);

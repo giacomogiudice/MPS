@@ -1,11 +1,12 @@
 function [C,carryover] = canonize(M,direction,varargin)
 % Computes canonization of MPS site M according
 % to left- (direction == +1) or right- canonization (direction == -1).
-% It then optionally performs a decimation by a certain bond size if
-% specified by the last two arguments
+% It then optionally performs a decimation if two additional are specified
+% The decimation is computed by taking the sum of the square of the singular
+% values and then keeping only the ones under (1 - epsilon)
 %
 % INPUT
-%   M:          site element of MPS, represented as a 3D tensor
+%   M:          site element of MPS, represented as a rank-3 tensor
 %   direction:  specifies left (-1) or right (+1) canonization
 %   D_max:      (optional) maximum allowed bond length
 %   epsilon:    (optional) tolerated error in decimation

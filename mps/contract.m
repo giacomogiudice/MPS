@@ -1,38 +1,38 @@
 function X = contract(X,indX,Y,indY)
 % Does tensor contraction between X and Y, summing over the indexes
-% specified by indX and inY
+% specified by indX and inY, in the order which they are stored in the t
 %
 % INPUT
-%   X,Y: tensors to contract
-%   indX,indY: array of indexes to contract of each tensor
+%   X, Y:       tensors to contract
+%   indX, indY: array of indexes to contract of each tensor
 % OUTPUT
-%   X: resulting tensor
+%   X:          resulting tensor
 
-numindX = length(size(X)); % total number of indexes for each tensor
+% Total number of indexes for each tensor
+numindX = length(size(X)); 
 numindY = length(size(Y)); 
-
-Xsize=size(X); % Size of input tensors
+% Size of input tensors
+Xsize=size(X); 
 Ysize=size(Y);
-
+% indXr and indYr are vectors of uncontracted indexes
 indXr=1:numindX; 
 indXr(indX)=[];
 indYr=1:numindY;
-indYr(indY)=[]; % indXr and indYr are vectors of uncontracted indices
+indYr(indY)=[]; 
+% Define size of contracted and remaining indexes
 sizeXr=Xsize(indXr); 
 sizeX=Xsize(indX); 
 sizeYr=Ysize(indYr); 
-sizeY=Ysize(indY); % size of contracted and remaining indices
+sizeY=Ysize(indY); 
 if any(sizeX ~= sizeY) % If any contracted dimension mismatch
     error('indX and indY are not of same dimension.');
 end
 if isempty(indYr)
     if isempty(indXr) % If no uncontracted indexes for both
         X=permute(X,indX);
-        X=reshape(X,[1,prod(sizeX)]);
-        % Arrange them by correct contraction indexes, then reshape into
-        %vector
-        Y=permute(Y,indY);
-        Y=reshape(Y,[prod(sizeY),1]); 
+        X=reshape(X,[1,prod(sizeX)]); 
+        Y=permute(Y,indY); % Arrange X and Y by correct contraction indexes
+        Y=reshape(Y,[prod(sizeY),1]); % Reshape into vector
         X=X*Y; % Output matrix
         return
     else % If no uncontracted indexes for Y but not for X
@@ -46,12 +46,10 @@ if isempty(indYr)
         return
     end
 end
-
-% If both have uncontracted indices
-X=permute(X,[indXr,indX]); % Concatenated array indXl,indX. Sends summed indexes to last places
+% Otherwise,  both have uncontracted indexes
+X=permute(X,[indXr,indX]); %  Send summed indexes to last places
 X=reshape(X,[prod(sizeXr),prod(sizeX)]); % Matrix reshape
-Y=permute(Y,[indY,indYr]); % Sends summed to first places
+Y=permute(Y,[indY,indYr]); % Send summed indexes to first places
 Y=reshape(Y,[prod(sizeY),prod(sizeYr)]); % Matrix reshape
-X=X*Y;
-Xsize=[Xsize(indXr),Ysize(indYr)]; % Size vector of final tensor
-X=reshape(X,Xsize); % Reshape to final size
+X=X*Y; % Perform contraction as a matrix-matrix operation
+X=reshape(X,[Xsize(indXr),Ysize(indYr)]); % Reshape to final size

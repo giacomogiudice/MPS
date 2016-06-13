@@ -1,6 +1,6 @@
 function mps_out = sweep(mps_in,mpo,direction,varargin)
-% Computes a DMRG-style sweep on an MPS, applying some unitary operator
-% and does canonization + decimation using 'canonize'
+% Computes a DMRG-style sweep on an MPS, applying some operator operator
+% in MPO form and then doing canonization + decimation using 'canonize'
 %
 % INPUT
 %   mps_in:         cell array corresponding to input MPS
@@ -10,8 +10,6 @@ function mps_out = sweep(mps_in,mpo,direction,varargin)
 %   epsilon:        (optional) maximum error in truncation
 % OUTPUT
 %   mps_out:        resulting MPS after computation
-%   max_bond_flag:  returns true if the maximum bond length has been
-%                   attained while compressing
 
 N = length(mps_in);
 mps_out = cell(1,N);

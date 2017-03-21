@@ -11,7 +11,8 @@ function [U,U_bar] = trotter(U_pair,D)
 
 % U -> P reshaping and SVD, then more reshaping
 P = reshape(U_pair,[D,D,D,D]);
-P = permute(P,[1,3,2,4]);           % not P = permute(P,[4,2,3,1]);
+P = permute(P,[4,2,3,1]);
+% P = permute(P,[1,3,2,4]);           % not P = permute(P,[4,2,3,1]);
 P = reshape(P,[D^2,D^2]);           % (sigma_1 sigma_1'),(sigma_2 sigma_2')
 
 [U,S,V] = svd(P,'econ');

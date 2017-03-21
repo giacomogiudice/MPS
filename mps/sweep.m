@@ -56,6 +56,6 @@ switch direction
             [mps_out{site},US] = canonize(mps_out{site},-1,D_max,epsilon);
         end
         mps_norm = US;
-    end
 end
 end
+

@@ -1,23 +1,42 @@
-% This stript test 'trotter' against the 'evolution_heisenberg'
+% This stript tests the first order Trotter decomposition
 
 close all
-clear 
-%% Initial Parameters
+clear all
 
+%% Initial Parameters
 N = 8;
 J = 1;
-U = 1;
+U = 1.5;
 d = 2;
 dt = 0.1; % Time increment
+test_tolerance = 1e-12;
 
-[U_odd,U_even] = evolution_heisenberg(N,J,U,dt);
-%% Stuff
-S_X =[0,1;1,0];
-S_Y = [0,-1i;1i,0];
-S_Z = [1,0;0,-1];
-Ham_pair = J*(kron(S_X,S_X) + kron(S_Y,S_Y)) + U*(kron(S_Z,S_Z));
-U_pair = expm(-1i*dt*Ham_pair);
-%% Kron
+%% Two-site Operator
+
+Ham_pair = randn(d^2,d^2);
+Ham_pair = Ham_pair'*Ham_pair;
+
+%% 1st Order Trotter Splitting
+U_odd = cell(1,N);
+U_even = cell(1,N);
+[V,W] = trotter(expm(-1i*dt*Ham_pair),d);
+for site = 1:2:N-1
+	U_odd{site} = V;
+	U_odd{site+1} = W;
+end
+for site = 2:2:N-1
+	U_even{site} = V;
+	U_even{site+1} = W;
+end
+
+U_even{1} = reshape(eye(2),[1 1 d d]);
+if mod(N,2)
+	U_odd{N} = reshape(eye(2),[1 1 d d]);
+else
+	U_even{N} = reshape(eye(2),[1 1 d d]);
+end
+
+%% Kron Version
  H_odd_kron = 0;
 
  for i = 1:2:N-1
@@ -30,14 +49,13 @@ for i = 2:2:N-1
     H_even_kron = H_even_kron + kron(kron(eye(d^(i-1)),Ham_pair),eye(d^(N-i-1)));
 end
 U_even_kron = expm(-1i*dt*H_even_kron);
-%% MPS U
+
+%% Compare
 fprintf('Testing U_odd...');
-assert(norm(expand_mpo(U_odd) - U_odd_kron) < 1e-12);
+assert(norm(expandMPO(U_odd) - U_odd_kron) < test_tolerance);
 fprintf('\tdone\n');
 fprintf('Testing U_even...');
-assert(norm(expand_mpo(U_even) - U_even_kron) < 1e-12);
+assert(norm(expandMPO(U_even) - U_even_kron) < test_tolerance);
 fprintf('\tdone\n');
-[U_odd_t,U_even_t] = trotter(U_pair,N,d);
-fprintf('Comparing with "trotter.m" ...');
-assert(norm(expand_mpo(U_odd) - expand_mpo(U_odd_t)) + norm(expand_mpo(U_even) - expand_mpo(U_even_t)) < 1e-12);
-fprintf('\tdone\n');
+
+fprintf('All tests passed!\n');

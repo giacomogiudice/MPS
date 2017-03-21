@@ -6,12 +6,14 @@
 % knowing what you are doing.
 
 close all
-clear 
+clear all
 %% Parameters
 N = 9;      % Number of sites
 d = 2;      % Local H-space dimension
 D_S = 2;    % State bond dimension
 D_O = 3;    % Operator bond dimension
+
+test_tolerance = 1e-12; % tolerance in numerical errors
 
 %% MPS Initialization
 M = cell(1,N);
@@ -40,12 +42,12 @@ else
 end
 
 %% MPO Initialization
-S_z = 1/sqrt(2)*[1,0;0,-1];
+s_z = 1/sqrt(2)*[1,0;0,-1];
 W = zeros(D_O,D_O,d,d);
 
 W(1,1,:,:) = eye(2);
-W(2,1,:,:) = S_z;
-W(3,2,:,:) = S_z;
+W(2,1,:,:) = s_z;
+W(3,2,:,:) = s_z;
 W(3,3,:,:) = eye(2);
 
 O = cell(1,N);
@@ -70,9 +72,9 @@ for i = 1:(N-1) % number of terms in H
     S = sparse(1);
     for j = 1:N
         if j == i
-            S = kron(S,S_z);
+            S = kron(S,s_z);
         elseif j == i + 1
-            S = kron(S,S_z);
+            S = kron(S,s_z);
         else
             S = kron(S,speye(2));
         end
@@ -85,32 +87,37 @@ Mprime = cell(1,N);
 for i = 1:N
     Mprime{i} = apply(O{i},M{i});
 end
-newstate = expand_mps(Mprime);
+newstate = expandMPS(Mprime);
 
+
+%% Check Consistency with Vector Operations
+fprintf('Testing MPS expansion...');
+assert(isequal(expandMPS(M),neel));
+fprintf('\tdone\n');
+fprintf('Testing MPO expansion...');
+assert(isequal(expandMPO(O),ham));
+fprintf('\tdone\n');
 fprintf('Testing MPO*MPS...');
 assert(isequal(newstate,ham*neel))
-fprintf('\t\tdone\n');
+fprintf('\tdone\n');
 fprintf('Testing scalar product...');
 assert(isequal(braket(M,Mprime),neel'*ham*neel))
 fprintf('\tdone\n');
-fprintf('Testing MPO expansion...');
-assert(isequal(expand_mpo(O),ham));
-fprintf('\tdone\n');
 
-%% Testing Canonized States
-I = cell(1,N);
-for i = 1:N
-    I{i} = reshape(eye(d),[1 1 d d]);
-end
-Mleft = sweep(Mprime,I,+1); % use sweep to canonize
+%% Test Canonization with SVD
+[Mleft,Mprime_norm] = sweep(M,O,+1);
 
 fprintf('Testing left canonization...');
-assert(iscanonized(Mleft,1));
-assert(norm(expand_mps(Mleft) - newstate/norm(newstate)) < 1e-12);
+assert(iscanonized(Mleft,1,test_tolerance));
+assert(1 - norm(braket(Mleft,Mprime)/Mprime_norm) < test_tolerance);
+assert(1 - norm(expandMPS(Mleft)'*newstate/norm(newstate)) < test_tolerance);
 fprintf('\tdone\n');
 
-Mright = sweep(Mleft,I,-1); % use sweep to canonize
+Mright = sweep(M,O,-1); 
 fprintf('Testing right canonization...');
-assert(iscanonized(Mright,-1));
-assert(norm(expand_mps(Mright) - newstate/norm(newstate)) < 1e-12);
+assert(iscanonized(Mright,-1,test_tolerance));
+assert(1 - norm(braket(Mright,Mprime)/Mprime_norm) < test_tolerance);
+assert(1 - norm(expandMPS(Mright)'*newstate/norm(newstate)) < test_tolerance);
 fprintf('\tdone\n');
+
+fprintf('All tests passed!\n');

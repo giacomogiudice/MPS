@@ -3,6 +3,8 @@ function melem = matrixelement(mps_1,mpo,mps_2)
 % polynomial time.
 % The inputs are cell arrays corresponding to MPS decompositions.
 % User should be warned that there is no check on correct sizes.
+% NOTE: Use the function 'expectationvalue' if the two input states
+% are the same.
 %
 % INPUT
 %   mps_1, mps_2:   cell-array representations of MPSs to contract, each

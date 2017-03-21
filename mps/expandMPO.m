@@ -1,4 +1,4 @@
-function operator = expand_mpo(mpo)
+function operator = expandMPO(mpo)
 % expands an MPO into its equivalent representation as a quantum-mechanical
 % state vector. This should only be used for debugging purposes on small
 % systems.

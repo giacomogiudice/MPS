@@ -1,4 +1,4 @@
-function state = expand_mps(mps)
+function state = expandMPS(mps)
 % expands an MPS into its equivalent representation as a quantum-mechanical
 % state vector. This should only be used for debugging purposes on small
 % systems.
@@ -23,6 +23,5 @@ for pos = 1:d^N
     end
     state(pos) = prod;
 end
-
 end
 

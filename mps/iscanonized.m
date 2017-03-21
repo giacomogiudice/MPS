@@ -10,11 +10,16 @@ function s = iscanonized(mps,direction,varargin)
 % OUTPUT
 %   s:          boolean which is set to true if condition is met
 
-tolerance = 1e-6;
+tolerance = 1e-10;
 if ~isempty(varargin)
     tolerance = varargin{1};
 end
     
+if ~iscell(mps)
+    disp('Expected cell array as first argument');
+    return
+end
+
 N = length(mps);
 d = size(mps{1},3);
 

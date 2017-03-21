@@ -9,20 +9,15 @@ function operator = expandMPO(mpo)
 % OUTPUT
 %   operator:  	matrix representation of the operator
 
+
 N = length(mpo);
-d = size(mpo{1},4);
-operator = zeros(d^N,d^N);
-% Compute the matrix of all possible combinations and store it in combs
-c = cell(1,N);  
-[c{:}] = ndgrid(1:d);
-combs = fliplr(cell2mat(cellfun(@(v) v(:),c,'UniformOutput',false)));
-for pos1 = 1:d^N
-    for pos2 = 1:d^N
-        prod = 1;
-        for i = 1:N
-            prod = prod*mpo{i}(:,:,combs(pos1,i),combs(pos2,i));
-        end
-        operator(pos1,pos2) = prod;
-    end
+d = size(mpo{1},3);
+
+block = squeeze(mpo{N});
+for site = N-1:-1:1
+	block = contract(block,2*(N-site)-1,mpo{site},2);
 end
+
+operator = reshape(permute(squeeze(block),[1:2:2*N,2:2:2*N]),[d^N,d^N]);
 end
+

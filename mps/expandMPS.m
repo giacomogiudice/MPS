@@ -11,17 +11,11 @@ function state = expandMPS(mps)
 
 N = length(mps);
 d = size(mps{1},3);
-state = zeros(d^N,1);
-% Compute the matrix of all possible combinations and store it in combs
-c = cell(1,N);
-[c{:}] = ndgrid(1:d);
-combs = fliplr(cell2mat(cellfun(@(v)v(:),c,'UniformOutput',false)));
-for pos = 1:d^N
-    prod = 1;
-    for i = 1:N
-        prod = prod*mps{i}(:,:,combs(pos,i));
-    end
-    state(pos) = prod;
-end
+
+block = squeeze(mps{N});
+for site = N-1:-1:1
+	block = contract(block,N-site,mps{site},2);
 end
 
+state = reshape(squeeze(block),[d^N,1]);
+end

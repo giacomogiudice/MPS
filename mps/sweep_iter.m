@@ -1,4 +1,4 @@
-function [mps_out,iter] = sweep_iter(mps_in,mpo,mps_out,varargin)
+function [mps_out,iter,distance] = sweep_iter(mps_in,mpo,mps_out,varargin)
 % Computes a DMRG-style sweep on an MPS, applying some operator in MPO form
 % and then doing canonization and decimation using the iterative method.
 %
@@ -17,6 +17,8 @@ function [mps_out,iter] = sweep_iter(mps_in,mpo,mps_out,varargin)
 % OUTPUT
 %   mps_out:            resulting MPS after computation in right canonization
 %   iter:               number of iterations in optimization
+%   distance:           distance between the compressed MPS and the full MPS,
+%                       useful to estimate the error in compressing
 
 % Default values
 iter_max = 10;
@@ -95,6 +97,8 @@ for iter = 1:iter_max
     mps_out{1} = optimization_step(target,blocks{1},blocks{2});
     Kvalues(1) = contract(conj(mps_out{1}),[1,2,3],mps_out{1},[1,2,3]);
     mps_out{1} = canonize_fast(mps_out{1},-1);
+    % Overlap is the last update
+    distance = 1 - abs(update_right(blocks{2},mps_out{1},target))
     % Calculate stopping condition
     if std(Kvalues)/abs(mean(Kvalues)) <= tolerance
         break;

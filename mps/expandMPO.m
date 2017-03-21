@@ -9,7 +9,6 @@ function operator = expandMPO(mpo)
 % OUTPUT
 %   operator:  	matrix representation of the operator
 
-
 N = length(mpo);
 d = size(mpo{1},3);
 
@@ -20,4 +19,3 @@ end
 
 operator = reshape(permute(squeeze(block),[1:2:2*N,2:2:2*N]),[d^N,d^N]);
 end
-

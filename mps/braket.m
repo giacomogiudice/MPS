@@ -11,15 +11,7 @@ function sprod = braket(mps_1,mps_2)
 %   sprod:          scalar (hopefully, but not guaranteed) corresponding to
 %                   the scalar product
 
-N = length(mps_1);
-d = size(mps_1{1},3);
-
-sprod = 1;
-for i = 1:N
-    sum = 0;
-    for sigma= 1:d
-        sum = sum + mps_1{i}(:,:,sigma)'*sprod*mps_2{i}(:,:,sigma);
-    end
-    sprod = sum;
-end
+N =length(mps_1);
+virtual_obs = cell(1,N);
+sprod = sandwich(mps_1,virtual_obs,mps_2);
 end

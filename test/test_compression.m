@@ -29,7 +29,8 @@ fprintf('\t distance SVD-iter %.3g\n',1 - norm(braket(Msvd,Miter)));
 
 fprintf('Testing forced truncation...');
 Msvd = sweep(Mrand,{},-1,D_force,truncation);
-[Miter,iterations] = sweep_iter(Mrand,{},randomMPS(N,D_force,d,1),500,tolerance);
+[Miter,iterations,dist_iter] = sweep_iter(Mrand,{},randomMPS(N,D_force,d,1),500,tolerance);
+assert(norm(1 - abs(braket(Mrand,Miter)) - abs(dist_iter)) < 1e-12);
 fprintf('\tdone\n');
 fprintf('\t distance original-SVD %.3g\n',1 - norm(braket(Mrand,Msvd)));
 fprintf('\t distance original-iter %.3g\n',1 - norm(braket(Mrand,Miter)));

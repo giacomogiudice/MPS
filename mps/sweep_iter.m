@@ -59,7 +59,7 @@ blocks{1} = 1;
 blocks{N+1} = 1;
 for site = N:(-1):1
     target = mult(mpo{site},mps_in{site},site);
-    blocks{site} = update_right(blocks{site+1},mps_out{site},target);
+    blocks{site} = update_block(blocks{site+1},mps_out{site},[],target,-1);
 end
 
 Kvalues = zeros(1,N);
@@ -73,7 +73,7 @@ for iter = 1:iter_max
         % Canonize the new element
         mps_out{site} = canonize_fast(mps_out{site},+1);
         % Update current block
-        blocks{site+1} = update_left(blocks{site},mps_out{site},target);
+        blocks{site+1} = update_block(blocks{site},mps_out{site},[],target,1);
     end
     % Do same for last site, except update
     target = mult(mpo{N},mps_in{N},N);
@@ -90,7 +90,8 @@ for iter = 1:iter_max
         % Canonize the new element
         mps_out{site} = canonize_fast(mps_out{site},-1);
         % Update current block
-        blocks{site} = update_right(blocks{site+1},mps_out{site},target);
+        blocks{site} = update_block(blocks{site+1},mps_out{site},[],target,-1);
+
     end
     % Do same for first site, except update
     target = mult(mpo{1},mps_in{1},1);
@@ -98,7 +99,7 @@ for iter = 1:iter_max
     Kvalues(1) = contract(conj(mps_out{1}),[1,2,3],mps_out{1},[1,2,3]);
     mps_out{1} = canonize_fast(mps_out{1},-1);
     % Overlap is the last update
-    distance = 1 - abs(update_right(blocks{2},mps_out{1},target))
+    distance = 1 - abs(update_block(blocks{2},mps_out{1},[],target,-1));
     % Calculate stopping condition
     if std(Kvalues)/abs(mean(Kvalues)) <= tolerance
         break;
@@ -109,16 +110,6 @@ end
 function new_guess = optimization_step(target,block_left,block_right)
     new_guess = contract(block_right,2,target,2);
     new_guess = contract(block_left,2,new_guess,2);
-end
-
-function new_block = update_left(prev_block,M_1,M_2)
-    new_block = contract(prev_block,1,conj(M_1),1);
-    new_block = contract(new_block,[1,3], M_2,[1,3]);
-end
-
-function new_block = update_right(prev_block,M_1,M_2)
-    new_block = contract(prev_block,1,conj(M_1),2);
-    new_block = contract(new_block,[1,3], M_2,[2,3]);
 end
 
 function bytes = predict_product_size(mpo,mps)

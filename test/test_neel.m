@@ -92,16 +92,16 @@ newstate = expandMPS(Mprime);
 
 %% Check Consistency with Vector Operations
 fprintf('Testing MPS expansion...');
-assert(isequal(expandMPS(M),neel));
+assert(norm(expandMPS(M) - neel) < test_tolerance);
 fprintf('\tdone\n');
 fprintf('Testing MPO expansion...');
-assert(isequal(expandMPO(O),ham));
+assert(norm(expandMPO(O) - ham) < test_tolerance);
 fprintf('\tdone\n');
-fprintf('Testing MPO*MPS...');
-assert(isequal(newstate,ham*neel))
+fprintf('Testing MPO times MPS...');
+assert(norm(newstate - ham*neel) < test_tolerance)
 fprintf('\tdone\n');
 fprintf('Testing scalar product...');
-assert(isequal(braket(M,Mprime),neel'*ham*neel))
+assert(norm(braket(M,Mprime) - neel'*ham*neel) < test_tolerance)
 fprintf('\tdone\n');
 
 %% Test Canonization with SVD

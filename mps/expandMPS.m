@@ -12,7 +12,7 @@ function state = expandMPS(mps)
 N = length(mps);
 d = size(mps{1},3);
 
-block = squeeze(mps{N});
+block = permute(mps{N},[1,3,2]);
 for site = N-1:-1:1
 	block = contract(block,N-site,mps{site},2);
 end

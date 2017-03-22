@@ -11,8 +11,7 @@ function operator = expandMPO(mpo)
 
 N = length(mpo);
 d = size(mpo{1},3);
-
-block = squeeze(mpo{N});
+block = permute(mpo{N},[1,3,4,2]);
 for site = N-1:-1:1
 	block = contract(block,2*(N-site)-1,mpo{site},2);
 end

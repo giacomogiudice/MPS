@@ -28,23 +28,21 @@ function new_block = update_block(prev_block,M_1,O,M_2,direction)
 
 switch direction
 	case +1 % Going left
-		if isempty(O)
-			new_block = contract(prev_block,1,conj(M_1),1);
-    		new_block = contract(new_block,[1,3], M_2,[1,3]);
-    	else
-    		new_block = contract(prev_block,1,M_2,2);
-    		new_block = contract(new_block,1,conj(M_1),1);
-    		new_block = contract(new_block,[2,4],O,[4,3]);
-    	end
+		new_block = contract(M_2,3,1,prev_block,3,2);
+		if ~isempty(O)
+			new_block = contract(new_block,4,[2,4],O,4,[4,1]);
+			new_block = contract(conj(M_1),3,[1,3],new_block,4,[2,4]);
+		else
+			new_block = contract(conj(M_1),3,[1,3],new_block,4,[3,2]);
+		end
 
 	case -1 % Going right
-		if isempty(O)
-			new_block = contract(prev_block,1,conj(M_1),2);
-			new_block = contract(new_block,[1,3], M_2,[2,3]);
+		new_block = contract(M_2,3,2,prev_block,3,2);
+		if ~isempty(O)
+			new_block = contract(new_block,4,[2,4],O,4,[4,2]);
+			new_block = contract(conj(M_1),3,[2,3],new_block,4,[2,4]);
 		else
-			new_block = contract(prev_block,1,M_2,2);
-			new_block = contract(new_block,1,conj(M_1),2);
-			new_block = contract(new_block,[2,4],O,[4,3]);
+			new_block = contract(conj(M_1),3,[2,3],new_block,4,[3,2]);
 		end
-end				
+end
 end

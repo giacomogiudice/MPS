@@ -14,7 +14,7 @@ function block = sandwich(mps_1,mpo,mps_2)
 N = length(mps_1);
 block = 1;
 
-for site=N:-1:1
-	block = update_block(block,mps_1{site},mpo{site},mps_2{site},-1);
+for site=1:N
+	block = update_block(block,mps_1{site},mpo{site},mps_2{site},1);
 end
 end

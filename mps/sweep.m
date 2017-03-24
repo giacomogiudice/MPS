@@ -42,7 +42,7 @@ switch direction
         [mps_out{1},SV] = canonize(mps_out{1},1,D_max,epsilon);
         for site = 2:N
             mps_out{site} = mult(mpo{site},mps_in{site});
-            mps_out{site} = contract(SV,2,mps_out{site},1);
+            mps_out{site} = contract(SV,2,2,mps_out{site},3,1);
             [mps_out{site},SV] = canonize(mps_out{site},1,D_max,epsilon);
         end
         mps_norm = SV;
@@ -52,7 +52,7 @@ switch direction
         [mps_out{N},US] = canonize(mps_out{N},-1,D_max,epsilon);
         for site = (N-1):(-1):1
             mps_out{site} = mult(mpo{site},mps_in{site});
-            mps_out{site} = permute(contract(mps_out{site},2,US,1),[1 3 2]);
+            mps_out{site} = permute(contract(mps_out{site},3,2,US,2,1),[1 3 2]);
             [mps_out{site},US] = canonize(mps_out{site},-1,D_max,epsilon);
         end
         mps_norm = US;

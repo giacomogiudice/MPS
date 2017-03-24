@@ -14,7 +14,7 @@ d = size(mps{1},3);
 
 block = permute(mps{N},[1,3,2]);
 for site = N-1:-1:1
-	block = contract(block,N-site,mps{site},2);
+	block = contract(block,N-site+1,N-site,mps{site},3,2);
 end
 
 state = reshape(squeeze(block),[d^N,1]);

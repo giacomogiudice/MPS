@@ -1,24 +1,30 @@
-function X = contract(X,indX,Y,indY)
+function X = contract(X,dimX,indX,Y,dimY,indY)
 % Does tensor contraction between X and Y, summing over the indexes
-% specified by indX and inY, in the order which they are stored in the 
-% corresponding input tensors.
+% specified by indX and indY, in the order which they are stored in the 
+% corresponding input tensors. MATLAB automatically discarting trailing
+% singleton dimensions for tensors larger than rank-2. Because of this it
+% is necessary to provide the dimension of the tensors X and Y. In this
+% way one does not have to worry if the last indices are virtual and this
+% will hopefully catch more coding mistakes.  
 %
 % INPUT
 %   X, Y:       tensors to contract
 %   indX, indY: array of indexes to contract of each tensor
+%   dimX, dimY: an array of the number of indices in X and Y
 % OUTPUT
 %   X:          resulting tensor
 
-% Total number of indices for each tensor
-numindX = length(size(X)); 
-numindY = length(size(Y)); 
-% Size of input tensors
-Xsize=size(X); 
-Ysize=size(Y);
-% indXr and indYr are vectors of uncontracted indices
-indXr=1:numindX; 
+% Compute the size of each tensor accounting for singleton dimensions
+Xsize=ones(1,dimX); 
+Xsize(1:ndims(X))=size(X);
+Ysize=ones(1,dimY); 
+Ysize(1:length(size(Y)))=size(Y);
+
+
+% indXr and indYr contain the uncontracted indices
+indXr=1:dimX; 
 indXr(indX)=[];
-indYr=1:numindY;
+indYr=1:dimY;
 indYr(indY)=[]; 
 % Define size of contracted and remaining indices
 sizeXr=Xsize(indXr); 
@@ -26,7 +32,7 @@ sizeX=Xsize(indX);
 sizeYr=Ysize(indYr); 
 sizeY=Ysize(indY); 
 if any(sizeX ~= sizeY) % If any contracted dimension mismatch
-    error('indX and indY are not of same dimension.');
+    error('Dimension mismatch in indices provided');
 end
 if isempty(indYr)
     if isempty(indXr) % If no uncontracted indices for both

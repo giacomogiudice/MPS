@@ -1,4 +1,4 @@
-function [mps_out,iter,distance] = sweep_iter(mps_in,mpo,mps_out,varargin)
+function [mps_out,iter,err] = sweep_iter(mps_in,mpo,mps_out,varargin)
 % Computes a DMRG-style sweep on an MPS, applying some operator in MPO form
 % and then doing canonization and decimation using the iterative method.
 %
@@ -9,7 +9,9 @@ function [mps_out,iter,distance] = sweep_iter(mps_in,mpo,mps_out,varargin)
 %                       (WARNING: must be left canonized!)
 %   iter_max:           (optional) maximum number of iterations
 %   tolerance:          (optional) tolerance in the difference between the 
-%                       guess and the full state
+%                       guess and the full state, expressed as the amount of
+%                       fluctuations in the distance between the full and 
+%                       the compressed MPS at each site one is willing to have
 %   max_storage_size:   (optional) maximum number of bytes available to 
 %                       store the full application of the MPO to  the MPS.
 %                       If the actual size is smaller that this limit, the
@@ -17,13 +19,13 @@ function [mps_out,iter,distance] = sweep_iter(mps_in,mpo,mps_out,varargin)
 % OUTPUT
 %   mps_out:            resulting MPS after computation in right canonization
 %   iter:               number of iterations in optimization
-%   distance:           distance between the compressed MPS and the full MPS,
-%                       useful to estimate the error in compressing
+%   err:                error in compressing, computed as the distance between
+%                       the compressed MPS and the full MPS,
 
 % Default values
-iter_max = 10;
-tolerance = 1e-4;
-max_storage_size = 1e8;
+iter_max = 1e3;
+tolerance = 1e-6;
+max_storage_size = inf;
 
 if ~isempty(varargin)
     iter_max = varargin{1};
@@ -57,7 +59,7 @@ end
 blocks = cell(1,N+1);
 blocks{1} = 1;
 blocks{N+1} = 1;
-for site = N:(-1):1
+for site = N:(-1):2
     target = mult(mpo{site},mps_in{site},site);
     blocks{site} = update_block(blocks{site+1},mps_out{site},[],target,-1);
 end
@@ -73,7 +75,7 @@ for iter = 1:iter_max
         % Canonize the new element
         mps_out{site} = canonize_fast(mps_out{site},+1);
         % Update current block
-        blocks{site+1} = update_block(blocks{site},mps_out{site},[],target,1);
+        blocks{site+1} = update_block(blocks{site},mps_out{site},[],target,+1);
     end
     % Do same for last site, except update
     target = mult(mpo{N},mps_in{N},N);
@@ -86,7 +88,7 @@ for iter = 1:iter_max
         % Optimization step
         mps_out{site} = optimization_step(target,blocks{site},blocks{site+1});
         % calculate error
-        Kvalues(site) = contract(conj(mps_out{site}),[1,2,3],mps_out{site},[1,2,3]);
+        Kvalues(site) = contract(conj(mps_out{site}),3,[1,2,3],mps_out{site},3,[1,2,3]);
         % Canonize the new element
         mps_out{site} = canonize_fast(mps_out{site},-1);
         % Update current block
@@ -96,20 +98,20 @@ for iter = 1:iter_max
     % Do same for first site, except update
     target = mult(mpo{1},mps_in{1},1);
     mps_out{1} = optimization_step(target,blocks{1},blocks{2});
-    Kvalues(1) = contract(conj(mps_out{1}),[1,2,3],mps_out{1},[1,2,3]);
+    Kvalues(1) = contract(conj(mps_out{1}),3,[1,2,3],mps_out{1},3,[1,2,3]);
     mps_out{1} = canonize_fast(mps_out{1},-1);
-    % Overlap is the last update
-    distance = 1 - abs(update_block(blocks{2},mps_out{1},[],target,-1));
     % Calculate stopping condition
     if std(Kvalues)/abs(mean(Kvalues)) <= tolerance
+        % Overlap is the last update
+        err = 1 - abs(update_block(blocks{2},mps_out{1},[],target,-1));
         break;
     end
 end
 end
 
 function new_guess = optimization_step(target,block_left,block_right)
-    new_guess = contract(block_right,2,target,2);
-    new_guess = contract(block_left,2,new_guess,2);
+    new_guess = contract(block_right,2,2,target,3,2);
+    new_guess = contract(block_left,2,2,new_guess,3,2);
 end
 
 function bytes = predict_product_size(mpo,mps)

@@ -18,6 +18,6 @@ function obs = expectationvalue(obs_set,mps)
 
 obs = zeros(M,1);
 for ind = 1:M
-	obs(ind) = sandwich(mps,obs_set(:),mps)
+	obs(ind) = sandwich(mps,obs_set(ind,:),mps);
 end
 end

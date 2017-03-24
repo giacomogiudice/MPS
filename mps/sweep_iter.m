@@ -20,7 +20,7 @@ function [mps_out,iter,err] = sweep_iter(mps_in,mpo,mps_out,varargin)
 %   mps_out:            resulting MPS after computation in right canonization
 %   iter:               number of iterations in optimization
 %   err:                error in compressing, computed as the distance between
-%                       the compressed MPS and the full MPS,
+%                       the compressed MPS and the full MPS
 
 % Default values
 iter_max = 1e3;

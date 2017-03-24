@@ -12,4 +12,3 @@ result = contract(O_2,4,3,O_1,4,4);
 s = size(result);
 result = reshape(permute(result,[4,1,5,2,6,3]),[s(1)*s(4),s(2)*s(5),s(6),s(3)]);
 end
-end

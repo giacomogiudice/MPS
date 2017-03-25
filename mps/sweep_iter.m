@@ -1,6 +1,8 @@
 function [mps_out,iter,err] = sweep_iter(mps_in,mpo,mps_out,varargin)
 % Computes a DMRG-style sweep on an MPS, applying some operator in MPO form
 % and then doing canonization and decimation using the iterative method.
+% WARNING: The MPS corresponding to the guess must be left-canonized (+1),
+% while the output MPS will be right-canonized (-1).
 %
 % INPUT
 %   mps_in:             cell array corresponding to input MPS

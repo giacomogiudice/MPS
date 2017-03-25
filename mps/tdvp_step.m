@@ -1,5 +1,17 @@
 function mps = tdvp_step(mps,mpo,dt)
-% blah
+% Computes a single time step of the Time-Dependent Variational Principle 
+% (TDVP) algorithm. This is performed with two DMRG-style sweeps of half 
+% the time step provided. Each site is then evolved with 4th order
+% Runge-Kutta integration.
+% WARNING: The input MPS must be right-canonized (-1), and so will be the
+% output MPS.
+%
+% INPUT
+%   mps:	cell array corresponding to input MPS
+%   mpo:	cell array corresponding to the Hamiltonian MPS
+%   dt:		time step for the evolution step
+% OUTPUT
+%   mps:	cell array corresponding to the evolved MPS
 
 N = length(mps);
 dt_half = dt/2;
@@ -18,8 +30,8 @@ for site = 1:(N-1)
 	fun = ham_onesite(mpo{site},blocks{site},blocks{site+1});
 	% Evolve the current element forward
 	mps{site} = RK4_step(mps{site},fun,dt_half);
-    % Canonize the new element
-    [mps{site},carryover] = canonize_fast(mps{site},+1);
+	% Canonize the new element
+	[mps{site},carryover] = canonize_fast(mps{site},+1);
 	% Compute block update
 	new_block = update_block(blocks{site},mps{site},mpo{site},mps{site},+1);
 	% Compute 'zero-site' effective Hamiltonian
@@ -41,8 +53,8 @@ for site = N:(-1):2
 	fun = ham_onesite(mpo{site},blocks{site},blocks{site+1});
 	% Evolve the current element forward
 	mps{site} = RK4_step(mps{site},fun,dt_half);
-    % Canonize the new element
-    [mps{site},carryover] = canonize_fast(mps{site},-1);
+	% Canonize the new element
+	[mps{site},carryover] = canonize_fast(mps{site},-1);
 	% Compute block update
 	new_block = update_block(blocks{site+1},mps{site},mpo{site},mps{site},-1);
 	% Compute 'zero-site' effective Hamiltonian

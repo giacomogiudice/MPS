@@ -10,31 +10,35 @@ function [mps_out,iter,err] = sweep_iter(mps_in,mpo,mps_out,varargin)
 %   mps_out:            cell array corresponding to guess of output MPS
 %                       (WARNING: must be left canonized!)
 %   iter_max:           (optional) maximum number of iterations
-%   tolerance:          (optional) tolerance in the difference between the 
-%                       guess and the full state, expressed as the amount of
-%                       fluctuations in the distance between the full and 
-%                       the compressed MPS at each site one is willing to have
+%   tolerance:          (optional) stopping condition on the relative 
+%                       improvement of the fidelity. The iterative routine
+%                       is stopped at the k-th iteration when
+%                       |fidelity[k+1] - fidelity[k]| < tolerance*fidelity[k+1]
 %   max_storage_size:   (optional) maximum number of bytes available to 
 %                       store the full application of the MPO to  the MPS.
 %                       If the actual size is smaller that this limit, the
 %                       product MPO*MPS will be cached
 % OUTPUT
 %   mps_out:            resulting MPS after computation in right canonization
-%   iter:               number of iterations in optimization
-%   err:                error in compressing, computed as the distance between
-%                       the compressed MPS and the full MPS
+%   iter:               number of iterations in the optimization
+%   err:                error in compressing, computed as the distance 
+%                       between the compressed MPS and the full MPS
 
 % Default values
-iter_max = 1e3;
+iter_max = 100;
 tolerance = 1e-6;
 max_storage_size = inf;
 
-if ~isempty(varargin)
-    iter_max = varargin{1};
-    tolerance = varargin{2}; 
-    if length(varargin) > 2
+switch length(varargin)
+    case 1
+        iter_max = varargin{1};
+    case 2
+        iter_max = varargin{1};
+        tolerance = varargin{2};
+    case 3
+        iter_max = varargin{1};
+        tolerance = varargin{2};
         max_storage_size = varargin{3};
-    end
 end
 
 if iter_max <= 0
@@ -66,7 +70,7 @@ for site = N:(-1):2
     blocks{site} = update_block(blocks{site+1},mps_out{site},[],target,-1);
 end
 
-Kvalues = zeros(1,N);
+fidelity_prev = 0;
 for iter = 1:iter_max
     % Optimization sweep left -> right
     for site = 1:(N-1)
@@ -89,8 +93,6 @@ for iter = 1:iter_max
         target = mult(mpo{site},mps_in{site},site);
         % Optimization step
         mps_out{site} = optimization_step(target,blocks{site},blocks{site+1});
-        % calculate error
-        Kvalues(site) = contract(conj(mps_out{site}),3,[1,2,3],mps_out{site},3,[1,2,3]);
         % Canonize the new element
         mps_out{site} = canonize_fast(mps_out{site},-1);
         % Update current block
@@ -100,15 +102,15 @@ for iter = 1:iter_max
     % Do same for first site, except update
     target = mult(mpo{1},mps_in{1},1);
     mps_out{1} = optimization_step(target,blocks{1},blocks{2});
-    Kvalues(1) = contract(conj(mps_out{1}),3,[1,2,3],mps_out{1},3,[1,2,3]);
     mps_out{1} = canonize_fast(mps_out{1},-1);
+    fidelity = abs(update_block(blocks{2},mps_out{1},[],target,-1));
     % Calculate stopping condition
-    if std(Kvalues)/abs(mean(Kvalues)) <= tolerance
-        % Overlap is the last update
-        err = 1 - abs(update_block(blocks{2},mps_out{1},[],target,-1));
+    if abs(fidelity-fidelity_prev) < tolerance*fidelity
         break;
     end
+    fidelity_prev = fidelity;
 end
+err = 1 - fidelity;
 end
 
 function new_guess = optimization_step(target,block_left,block_right)

@@ -8,6 +8,7 @@ function mps = tdvp_step(mps,mpo,dt)
 %
 % INPUT
 %   mps:	cell array corresponding to input MPS
+%			(WARNING: must be right canonized!)
 %   mpo:	cell array corresponding to the Hamiltonian MPS
 %   dt:		time step for the evolution step
 % OUTPUT
@@ -69,7 +70,6 @@ end
 fun = ham_onesite(mpo{1},blocks{1},blocks{2});
 mps{1} = RK4_step(mps{1},fun,dt_half);
 mps{1} = canonize_fast(mps{1},-1);
-
 end
 
 function handle = ham_onesite(op,left,right)

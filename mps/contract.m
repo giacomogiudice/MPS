@@ -1,4 +1,4 @@
-function X = contract(X,dimX,indX,Y,dimY,indY)
+function Z = contract(X,dimX,indX,Y,dimY,indY)
 % Does tensor contraction between X and Y, summing over the indexes
 % specified by indX and indY, in the order which they are stored in the 
 % corresponding input tensors. MATLAB automatically discarting trailing
@@ -6,13 +6,17 @@ function X = contract(X,dimX,indX,Y,dimY,indY)
 % is necessary to provide the dimension of the tensors X and Y. In this
 % way one does not have to worry if the last indices are virtual and this
 % will hopefully catch more coding mistakes.  
+% The contraction is achieved by reshuffling the indices of the tensors 
+% so that all the indices to contract are placed at the end of X and at 
+% the beginning of Y. In this way the problem can be reduced to a matrix
+% multiplication, which MATLAB is very fast at.
 %
 % INPUT
 %   X, Y:       tensors to contract
 %   indX, indY: array of indexes to contract of each tensor
 %   dimX, dimY: an array of the number of indices in X and Y
 % OUTPUT
-%   X:          resulting tensor
+%   Z:          resulting tensor after contracting (X,Y) over (indX,indY)
 
 % Compute the size of each tensor accounting for singleton dimensions
 Xsize=ones(1,dimX); 
@@ -20,44 +24,52 @@ Xsize(1:ndims(X))=size(X);
 Ysize=ones(1,dimY); 
 Ysize(1:length(size(Y)))=size(Y);
 
-
-% indXr and indYr contain the uncontracted indices
+% indXr and indYr contain the remaining (uncontracted) indices
 indXr=1:dimX; 
 indXr(indX)=[];
 indYr=1:dimY;
 indYr(indY)=[]; 
-% Define size of contracted and remaining indices
+% Define size of summed indices and remaining indices
 sizeXr=Xsize(indXr); 
 sizeX=Xsize(indX); 
 sizeYr=Ysize(indYr); 
 sizeY=Ysize(indY); 
-if any(sizeX ~= sizeY) % If any contracted dimension mismatch
+% If any contracted dimension mismatch
+if any(sizeX ~= sizeY)
     error('Dimension mismatch in indices provided');
 end
+
 if isempty(indYr)
-    if isempty(indXr) % If no uncontracted indices for both
+    % If both tensors are fully contracted, place the indices in the correct
+    % order, reshape both into a vector and perform the contraction as a 
+    % vector-vector multiplication
+    if isempty(indXr) 
         X=permute(X,indX);
         X=reshape(X,[1,prod(sizeX)]); 
-        Y=permute(Y,indY); % Arrange X and Y by correct contraction indexes
-        Y=reshape(Y,[prod(sizeY),1]); % Reshape into vector
-        X=X*Y; % Output matrix
+        Y=permute(Y,indY); 
+        Y=reshape(Y,[prod(sizeY),1]);
+        Z=X*Y; 
         return
-    else % If no uncontracted indices for Y but not for X
+    % If Y is fully contracted, place the indices in the correct order,
+    % reshape Y into a vector and perform a matrix-vector operation
+    else 
         X=permute(X,[indXr,indX]);
         X=reshape(X,[prod(sizeXr),prod(sizeX)]);
         Y=permute(Y,indY);
         Y=reshape(Y,[prod(sizeY),1]);
-        X=X*Y;
+        Z=X*Y;
         Xsize=Xsize(indXr);
-        X=reshape(X,[Xsize,1]);
+        Z=reshape(Z,[Xsize,1]);
         return
     end
 end
-% Otherwise,  both have uncontracted indices
-X=permute(X,[indXr,indX]); %  Send summed indices to last places
-X=reshape(X,[prod(sizeXr),prod(sizeX)]); % Matrix reshape
-Y=permute(Y,[indY,indYr]); % Send summed indices to first places
-Y=reshape(Y,[prod(sizeY),prod(sizeYr)]); % Matrix reshape
-X=X*Y; % Perform contraction as a matrix-matrix operation
-X=reshape(X,[Xsize(indXr),Ysize(indYr)]); % Reshape to final size
+% Otherwise, both have uncontracted indices. Send summed indices to the 
+% last places of X, send the summed indices to the first places of Y, and
+% perform the contraction as a matrix-matrix operation
+X=permute(X,[indXr,indX]);
+X=reshape(X,[prod(sizeXr),prod(sizeX)]);
+Y=permute(Y,[indY,indYr]);
+Y=reshape(Y,[prod(sizeY),prod(sizeYr)]);
+Z=X*Y;
+Z=reshape(Z,[Xsize(indXr),Ysize(indYr)]);
 end

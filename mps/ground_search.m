@@ -66,25 +66,21 @@ for iter = 1:iter_max
 		% Compute block update
 		blocks{site+1} = update_block(blocks{site},mps{site},mpo{site},mps{site},+1);
 	end
-	% Do not update blocks in last step
-	fun = ham_onesite(mpo{N},blocks{N},blocks{N+1});
-	[mps{N},E] = optimization_step(mps{N},fun);
-	mps{N} = canonize_fast(mps{N},+1);
+	% % Do not update blocks in last step
+	% fun = ham_onesite(mpo{N},blocks{N},blocks{N+1});
+	% [mps{N},E] = optimization_step(mps{N},fun);
+	% mps{N} = canonize_fast(mps{N},+1);
 	% Sweep right -> left
 	for site = N:(-1):2
 		% Compute 'one-site' effective Hamiltonian
 		fun = ham_onesite(mpo{site},blocks{site},blocks{site+1});
 		% Solve the local problem
-		mps{site} = optimization_step(mps{site},fun);
+		[mps{site},E] = optimization_step(mps{site},fun);
 		% Canonize the new element
-		mps{site} = canonize_fast(mps{site},-1);
+		[mps{site},carryover] = canonize_fast(mps{site},-1);
 		% Compute block update
 		blocks{site} = update_block(blocks{site+1},mps{site},mpo{site},mps{site},-1);
 	end
-	% Do only the forward step for the first site
-	fun = ham_onesite(mpo{1},blocks{1},blocks{2});
-	[mps{1},E] = optimization_step(mps{1},fun);
-	mps{1} = canonize_fast(mps{1},-1);
 
 	% Print information to screen
 	if verbose
@@ -100,6 +96,13 @@ for iter = 1:iter_max
 	end
 	E_prev = E;
 end
+% Do only the forward step for the first site
+	% fun = ham_onesite(mpo{1},blocks{1},blocks{2});
+	% [mps{1},E] = optimization_step(mps{1},fun);
+	% mps{1} = canonize_fast(mps{1},-1);
+% Right-canonize last site
+mps{1} = permute(contract(mps{1},3,2,carryover,2,1),[1 3 2]);
+mps{1} = canonize_fast(mps{1},-1);
 end
 
 function handle = ham_onesite(op,left,right)

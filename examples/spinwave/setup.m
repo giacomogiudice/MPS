@@ -4,7 +4,7 @@ dt = 0.05;			% Time step
 time_steps = 200;	% Total number of time steps
 
 % Location where to save
-filename = 'workspaces/heisenberg.mat';
+filename = 'workspaces/spinwave.mat';
 
 %% Simulation Parameters
 

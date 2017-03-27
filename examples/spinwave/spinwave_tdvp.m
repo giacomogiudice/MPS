@@ -5,7 +5,6 @@ clear
 setup
 
 %% Define Hamiltonian Operator
-% Two-site Hamiltonian
 D_O = 5;
 W = zeros(D_O,D_O,d,d);
 W(1,1,:,:) = sigma.id;

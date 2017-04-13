@@ -3,11 +3,11 @@ function handle = fun_onesite(op,left,right)
 % one-site Hamiltonian". This is used internally for the TDVP and ground 
 % search routines. Diagrammatically this corresponds to the function
 %       
-%                 --M--
-%                /  |  \
-%   fun(M) = left --O-- right
-%                \  |  /
-%                 --M--	
+%                   M
+%                 / | \
+%    fun(M) = left -O- right
+%                 \ | /
+%                   M	
 %
 % INPUT
 %	op:			MPO element in the contraction	

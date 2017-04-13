@@ -1,13 +1,15 @@
 function new_block = update_block(prev_block,M_1,O,M_2,direction)
 % To be used in the block abstraction when contracting an MPS. This function
 % computes the update of the new block, in the direction specified.
-% The corresponding tensor diagrams are
+% All blocks are rank-3 or rank-2 (depending if the operator has a virtual 
+% bond dimension) and the indices are ordererd with the convention 
+% (bra,ket,operator). The corresponding tensor diagrams are
 %
-%   -M_1-                                 -M_1-
-%    |   \                               /  |
-%   -O--- prev_block    or    prev_block ---O-
-%    |   /                               \  |
-%   -M_2-                                 -M_2-
+%   -M_1                                 M_1-
+%    |  \                               / |
+%   -O-- prev_block    or    prev_block --O-
+%    |  /                               \ |
+%   -M_2                                 M_2-
 %   
 % direction == -1(right) or   direction == +1 (left)
 %

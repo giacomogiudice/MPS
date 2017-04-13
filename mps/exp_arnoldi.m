@@ -16,7 +16,9 @@ function [v_out,mk] = exp_arnoldi(v_in,fun,dt,m,tolerance)
 %   dt:			time step (can be imaginary)
 %	m:			(optional) maximum number of additional Krylov 
 %				pseudo-vectors to be stored
-%	tolerance:	(optional) precision in the norm of the next Krylov vector
+%	tolerance:	(optional) stopping condition for the number of Krylov 
+%				vectors to store, measured as the the norm of the next
+%				Krylov vector (see Expokit paper by R. B. Sidje)
 % OUTPUT
 %	v_out:		output tensor (or pseudo-vector) corresponding to the 
 %				evolved state

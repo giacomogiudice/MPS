@@ -3,11 +3,11 @@ function handle = fun_zerosite(left,right)
 % zero-site Hamiltonian". This is used internally for the TDVP routine to
 % evolve the carryover backward in time. Diagrammatically this corresponds
 % to the function
-%                 -C-
-%                /   \
-%   fun(C) = left --- right
-%                \   /
-%                 -C-	
+%                  C
+%                 / \
+%    fun(C) = left - right
+%                 \ /
+%                  C	
 %
 % INPUT
 %	left,right:	partial contraction of the left and right blocks 

@@ -3,20 +3,17 @@ function new_block = update_block(prev_block,M_1,O,M_2,direction)
 % computes the update of the new block, in the direction specified.
 % The corresponding tensor diagrams are
 %
-%   -M_1-                                  -M_1-
-%    |   \                                /  |
-%   -O-   =prev_block    or    prev_block=  -O-
-%    |   /                                \  |
-%   -M_2-                                  -M_2-
+%   -M_1-                                 -M_1-
+%    |   \                               /  |
+%   -O--- prev_block    or    prev_block ---O-
+%    |   /                               \  |
+%   -M_2-                                 -M_2-
 %   
 % direction == -1(right) or   direction == +1 (left)
 %
 % INPUT
-%   prev_block:	rank-2 cell array corresponding to the set of observables
-%				in MPO form. The first index corresponds to the ordering of
-%				the observables, while the second index corresponds to the 
-%				site (physical) index, and necessarily must match the number
-%				of sites in mps
+%   prev_block:	rank-3 tensor corresponding to the partial contraction
+%				of all the blocks to the right or the left
 %   M_1:      	MPS element corresponding to the bra-state
 %	O:			MPO element to sandwich between the MPS elements, an empty 
 %				element can be provided
@@ -24,7 +21,8 @@ function new_block = update_block(prev_block,M_1,O,M_2,direction)
 %	direction:	direction in which the block are being updated, specify
 %				left (-1) or right (+1)
 % OUTPUT
-%   obs:		vector corresponding to the observables associated to 
+% 	new_block:	rank-3 tensor corresponding to the previous block contracted
+%				with the next layer
 
 switch direction
 	case +1 % Going left

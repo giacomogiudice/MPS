@@ -1,4 +1,4 @@
-function [mps_out,iter,err] = sweep_iter(mps_in,mpo,mps_out,varargin)
+function [mps_out,iter,err] = sweep_iter(mps_in,mpo,mps_out,iter_max,tolerance,max_storage_size)
 % Computes a DMRG-style sweep on an MPS, applying some operator in MPO form
 % and then doing canonization and decimation using the iterative method.
 % WARNING: The MPS corresponding to the guess must be left-canonized (+1),
@@ -24,21 +24,15 @@ function [mps_out,iter,err] = sweep_iter(mps_in,mpo,mps_out,varargin)
 %   err:                error in compressing, computed as the distance 
 %                       between the compressed MPS and the full MPS
 
-% Default values
-iter_max = 100;
-tolerance = 1e-6;
-max_storage_size = inf;
-
-switch length(varargin)
-    case 1
-        iter_max = varargin{1};
-    case 2
-        iter_max = varargin{1};
-        tolerance = varargin{2};
-    case 3
-        iter_max = varargin{1};
-        tolerance = varargin{2};
-        max_storage_size = varargin{3};
+% Handle optional arguments
+if nargin < 6
+    max_storage_size = inf;
+end
+if nargin < 5
+    tolerance = 1e-6;
+end
+if nargin < 4
+    iter_max = 100;
 end
 
 if iter_max <= 0

@@ -1,4 +1,4 @@
-function [C,carryover] = canonize(M,direction,varargin)
+function [C,carryover] = canonize(M,direction,D_max,epsilon)
 % Computes canonization of MPS site M according
 % to left- (direction == +1) or right- canonization (direction == -1).
 % It then optionally performs a decimation if two additional are specified
@@ -14,12 +14,12 @@ function [C,carryover] = canonize(M,direction,varargin)
 %   C:          MPS element canonized, A or B
 %   carryover:  product to multiply with next neighbor, S*V' or U*S
 
-if isempty(varargin)
+% Handle optional arguments
+if nargin == 2
     [C,carryover] = canonize_fast(M,direction);
     return
-else
-    D_max = varargin{1};
-    epsilon = varargin{2};
+elseif nargin == 3 || isempty(epsilon)
+    epsilon = eps;
 end
 
 [b_1,b_2,d] = size(M);

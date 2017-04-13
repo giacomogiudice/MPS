@@ -1,4 +1,4 @@
-function [mps_out,mps_norm] = sweep(mps_in,mpo,direction,varargin)
+function [mps_out,mps_norm] = sweep(mps_in,mpo,direction,D_max,epsilon)
 % Computes a DMRG-style sweep on an MPS, applying some operator in MPO form
 % and then doing canonization + decimation using 'canonize'
 %
@@ -13,16 +13,15 @@ function [mps_out,mps_norm] = sweep(mps_in,mpo,direction,varargin)
 %                   input MPS
 %   mps_norm:       square of the norm of the input MPS
 
-if isempty(varargin)
+if nargin == 3
     if isempty(mpo)
         [mps_out,mps_norm] = sweep_fast(mps_in,direction);
         return
     end
     D_max = [];
     epsilon = [];
-else
-    D_max = varargin{1};
-    epsilon = varargin{2};
+elseif nargin == 4
+    epsilon = 1e-8;
 end
 
 N = length(mps_in);

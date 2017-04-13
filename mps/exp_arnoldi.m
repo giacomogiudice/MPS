@@ -22,12 +22,12 @@ function [v_out,mk] = exp_arnoldi(v_in,fun,dt,m,tolerance)
 %				evolved state
 %	mk:			number of additional Krylov pseudo-vectors effectively used
 
-% Handle default values	
-if nargin == 3
-	tolerance = 1e-7;
-	m = min(30,prod(size(v_in)));
-elseif nargin == 4
-	tolerance = 1e-7;
+% Handle optional arguments
+if nargin < 5
+	tolerance = 1e-6;
+end
+if nargin < 4
+	m = min(20,numel(v_in));
 end
 
 scalar_product = @(x,y) conj(reshape(x,1,[]))*reshape(y,[],1);
@@ -63,7 +63,7 @@ U = expm(dt*hessenberg(1:mred,1:mred));
 U = normv*U(:,1);
 
 % Build output vector
-mk = min(mred,m-1);
+mk = min(mred,m+1);
 v_out = U(1)*krylov{1};
 for j = 2:mk
 	v_out = v_out + U(j)*krylov{j};

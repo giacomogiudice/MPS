@@ -1,4 +1,4 @@
-function [mps,E,iter] = ground_search(mps,mpo,varargin)
+function [mps,E,iter] = ground_search(mps,mpo,iter_max,precision,verbose)
 % In the spirit of DMRG, finds an MPS approximation of the state that 
 % minimizes of the function <mps|mpo|mps> - E<mps|mps>. This problem is
 % iteratively approximated by solving a local eigenvalue problem.
@@ -27,20 +27,15 @@ function [mps,E,iter] = ground_search(mps,mpo,varargin)
 %	E:			approximation of the smallest real eigenvalue		
 %   iter:      	number of iterations in the optimization
 
-% Default values
-iter_max = 100;
-precision = eps;
-verbose = false;
-switch length(varargin)
-	case 1
-		iter_max = varargin{1};
-	case 2
-		iter_max = varargin{1};
-		precision = varargin{2};
-	case 3
-		iter_max = varargin{1};
-		precision = varargin{2};
-		verbose = varargin{3};
+% Handle optional arguments
+if nargin < 5
+	verbose = false;
+end
+if nargin < 4
+	precision = eps;
+end
+if nargin == 3
+	iter_max = 100;
 end
 
 N = length(mps);

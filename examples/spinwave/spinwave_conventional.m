@@ -46,13 +46,10 @@ magn_conventional = zeros(N,time_steps);
 for site = 1:N
     magn_conventional(site,1) = state'*magnetization{site}*state;
 end
-% Runge-Kutta order 4 evolution
+
+% Arnoldi exponential approximation
 for step = 2:time_steps
-    k1 = -1i*(H*state);
-    k2 = -1i*H*(state + (dt/2)*k1);
-    k3 = -1i*H*(state + (dt/2)*k2);
-    k4 = -1i*H*(state + dt*k3);
-    state = state + (dt/6)*(k1 + 2*k2 + 2*k3 + k4);
+    state = exp_arnoldi(state,@(v) -1i*(H*v),dt,4,1e-4);
     state = state/norm(state);
     for site = 1:N
         magn_conventional(site,step) = state'*magnetization{site}*state;

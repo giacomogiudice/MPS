@@ -4,10 +4,10 @@ function state = expandMPS(mps)
 % systems.
 % 
 % INPUT
-%   mps:    cell-array of rank-3 tensors representing the MPS. Indexing
-%           convention is (bond,bond,physical)
+%	mps:	cell-array of rank-3 tensors representing the MPS. Indexing
+%			convention is (bond,bond,physical)
 % OUTPUT
-%   state:  column-vector representation of the state
+%	state:	column-vector representation of the state
 
 N = length(mps);
 d = size(mps{1},3);

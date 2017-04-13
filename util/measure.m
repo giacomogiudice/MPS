@@ -6,15 +6,15 @@ function obs = measure(obs_set,density_mps,obs_type)
 % of the density matrix.
 %
 % INPUT
-%   obs_set:		rank-1 or rank-2 cell array, where each element is 
-% 					an MPS corresponding to the observable
-%   density_mps:  	MPS corrensponding to the MPDO
+%	obs_set:		rank-1 or rank-2 cell array, where each element is 
+%					an MPS corresponding to the observable
+%	density_mps:	MPS corrensponding to the MPDO
 %	obs_type:		string corresponding to the type of observable:
 %					'single' for N sigle sites, 'neighbor' for N-1 two-site
 %					nearest-neighbor observables, and 'set' to compute
 %					a 2D set.
 % OUTPUT
-%   obs:  			array of corresponding observable for each site
+%	obs:  			array of corresponding observable for each site
 
 M = length(density_mps);
 
@@ -32,9 +32,9 @@ case 'neighbor'
 case 'set'
 	obs = zeros(M,N);
 for i = 1:size(obs_set,1)
-    for j = 1:size(obs_set,2)
-        obs(i,j) = braket(obs_set{i,j},density_mps);
-    end
+	for j = 1:size(obs_set,2)
+		obs(i,j) = braket(obs_set{i,j},density_mps);
+	end
 end
 otherwise
 	fprintf('Unrecognized observable type: %s\n',obs_type);

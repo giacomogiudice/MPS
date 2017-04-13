@@ -18,20 +18,20 @@ U_even = cell(1,N);
 [V,W] = trotter(expm(-1i*Ham*dt/2),d);
 % Build Operators for second-order Trotter-Suzuki
 for site = 1:2:N-1
-    U_odd{site} = V;
-    U_odd{site+1} = W;
+	U_odd{site} = V;
+	U_odd{site+1} = W;
 end
 [V,W] = trotter(expm(-1i*Ham*dt),d);
 for site = 2:2:N-1
-    U_even{site} = V;
-    U_even{site+1} = W;
+	U_even{site} = V;
+	U_even{site+1} = W;
 end
 % Fix boundaries
 U_even{1} = reshape(sigma.id,[1,1,d,d]);
 if mod(N,2)
-    U_odd{N} = reshape(sigma.id,[1,1,d,d]);
+	U_odd{N} = reshape(sigma.id,[1,1,d,d]);
 else
-    U_even{N} = reshape(sigma.id,[1,1,d,d]);
+	U_even{N} = reshape(sigma.id,[1,1,d,d]);
 end
 % Do  compression to merge into a single operator
 U = compressMPO(U_odd,U_even,U_odd); 
@@ -39,7 +39,7 @@ U = compressMPO(U_odd,U_even,U_odd);
 %% Build Initial State
 state = cell(1,N);
 for site = 1:N
-    state{site} = reshape([0,1],[1,1,d]);
+	state{site} = reshape([0,1],[1,1,d]);
 end
 state{1} = reshape([1,0],[1,1,d]);
 
@@ -47,11 +47,11 @@ state{1} = reshape([1,0],[1,1,d]);
 identity = cell(1,N);
 magnetization = cell(N,N);
 for site = 1:N
-    identity{site} = reshape(sigma.id,[1 1 d d]);
+	identity{site} = reshape(sigma.id,[1 1 d d]);
 end
 for site = 1:N
-    magnetization(site,:) = identity;
-    magnetization{site,site} = reshape(sigma.z,[1,1,d,d]);
+	magnetization(site,:) = identity;
+	magnetization{site,site} = reshape(sigma.z,[1,1,d,d]);
 end
 
 maxbond = @(s) max(cellfun(@(x) max(size(x,1),size(x,2)),s));
@@ -67,10 +67,10 @@ magn_iter(:,1) = real(expectationvalue(magnetization,state));
 
 % Trotter-Suzuki order 2
 for step = 2:time_steps
-    [state,iter,err] = sweep_iter(state,U,randomMPS(N,D_static,d,1),iter_max,tolerance);
-    magn_iter(:,step) = real(expectationvalue(magnetization,state));
-    compression_iter(step) = iter;
-    compression_err(step) = err;
+	[state,iter,err] = sweep_iter(state,U,randomMPS(N,D_static,d,1),iter_max,tolerance);
+	magn_iter(:,step) = real(expectationvalue(magnetization,state));
+	compression_iter(step) = iter;
+	compression_err(step) = err;
 end
 
 %% Save To File

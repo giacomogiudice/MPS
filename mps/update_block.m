@@ -12,7 +12,7 @@ function new_block = update_block(prev_block,M_1,O,M_2,direction)
 % direction == -1(right) or   direction == +1 (left)
 %
 % INPUT
-%   prev_block:	rank-3 tensor corresponding to the partial contraction
+%	prev_block:	rank-3 tensor corresponding to the partial contraction
 %				of all the blocks to the right or the left
 %   M_1:      	MPS element corresponding to the bra-state
 %	O:			MPO element to sandwich between the MPS elements, an empty 

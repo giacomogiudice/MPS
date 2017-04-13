@@ -7,12 +7,12 @@ function [mps,err] = tdvp_step(mps,mpo,dt)
 % output MPS.
 %
 % INPUT
-%   mps:	cell array corresponding to input MPS
+%	mps:	cell array corresponding to input MPS
 %			(WARNING: must be right canonized!)
-%   mpo:	cell array corresponding to the Hamiltonian MPS
-%   dt:		time step for the evolution step
+%	mpo:	cell array corresponding to the Hamiltonian MPS
+%	dt:		time step for the evolution step
 % OUTPUT
-%   mps:	cell array corresponding to the evolved MPS
+%	mps:	cell array corresponding to the evolved MPS
 %	err:	error in the time step, calculated as the norm of the component
 %			projected outside the MPS manifold
 

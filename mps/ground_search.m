@@ -12,20 +12,20 @@ function [mps,E,iter] = ground_search(mps,mpo,iter_max,precision,verbose)
 % output MPS.
 %
 % INPUT
-%   mps_in:		cell array corresponding to input MPS, usually a random 
+%	mps_in:		cell array corresponding to input MPS, usually a random 
 %				MPS with sufficient bond dimension is a good start
 %				(WARNING: must be left canonized!)
-%   mpo:      	cell array corresponding to MPO, assumed to be Hermitian           
-%   iter_max:	(optional) maximum number of iterations
-%   precision:	(optional) stopping condition on the relative improvement
+%	mpo:		cell array corresponding to MPO, assumed to be Hermitian           
+%	iter_max:	(optional) maximum number of iterations
+%	precision:	(optional) stopping condition on the relative improvement
 %				of the eigenvalue. The iterative routine is stopped at the
 %				k-th iteration when |E[k+1] - E[k]| < precision*|E[k+1]|
 %   verbose:	(optional) setting this to true will output on the screen
 %				the results at each iteration
 % OUTPUT
-%   mps:	 	approximation of the eigenstate in right canonization
+%	mps:		approximation of the eigenstate in right canonization
 %	E:			approximation of the smallest real eigenvalue		
-%   iter:      	number of iterations in the optimization
+%	iter:		number of iterations in the optimization
 
 % Handle optional arguments
 if nargin < 5

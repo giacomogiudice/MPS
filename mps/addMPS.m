@@ -2,7 +2,7 @@ function mps_out = addMPS(mps_1,mps_2)
 % Adds two MPS by combining each element in a block-diagonal way
 % 
 % INPUT
-%   mps_1,mps_2:	MPS represented as a cell array, with 
+%	mps_1,mps_2:	MPS represented as a cell array, with 
 %					index convention (bond,bond,physical,physical)
 % OUTPUT
 %   mps_2: 			MPS corresponding to the sum of the inputs

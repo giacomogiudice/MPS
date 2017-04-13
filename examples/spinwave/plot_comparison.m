@@ -41,7 +41,7 @@ figure
 sites = 1:N;
 hold on
 for k = 1:length(profiles)
-    handles(k) = plot(sites,profiles{k}(:,1));
+	handles(k) = plot(sites,profiles{k}(:,1));
 end 
 legend(legend_str);
 xlabel('sites')
@@ -50,6 +50,6 @@ axis([0.5 N+0.5 -1.2 1.2])
 for step = 1:time_steps
 	pause(1/16)
 	for k = 1:length(profiles)
-    	set(handles(k),'YData',profiles{k}(:,step));
-    end 
+		set(handles(k),'YData',profiles{k}(:,step));
+	end 
 end

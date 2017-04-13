@@ -3,10 +3,10 @@ function result = multiply(O_1,O_2)
 % (bond,bond,physical,physical).
 % 
 % INPUT
-%   O_1,O_2:    MPO element, a rank-4 tensor with index convention
+%	O_1,O_2:	MPO element, a rank-4 tensor with index convention
 %				(bond,bond,physical,physical)
 % OUTPUT
-%   result:     corresponding MPO element after multiplication
+%	result:		corresponding MPO element after multiplication
 
 result = contract(O_2,4,3,O_1,4,4);
 s = size(result);

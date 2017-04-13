@@ -20,14 +20,14 @@ W(5,5,:,:) = sigma.id;
 H = cell(1,N);
 H{1} = W(D_O,:,:,:);
 for i = 2:N-1
-    H{i} = W;
+	H{i} = W;
 end
 H{N} = W(:,1,:,:);
 
 %% Build Initial State
 state = cell(1,N);
 for site = 1:N
-    state{site} = reshape([0,1],[1,1,d]);
+	state{site} = reshape([0,1],[1,1,d]);
 end
 state{1} = reshape([1,0],[1,1,d]);
 % Pad state
@@ -37,11 +37,11 @@ state = padMPS(state,D_static,-1);
 identity = cell(1,N);
 magnetization = cell(N,N);
 for site = 1:N
-    identity{site} = reshape(sigma.id,[1 1 d d]);
+	identity{site} = reshape(sigma.id,[1 1 d d]);
 end
 for site = 1:N
-    magnetization(site,:) = identity;
-    magnetization{site,site} = reshape(sigma.z,[1,1,d,d]);
+	magnetization(site,:) = identity;
+	magnetization{site,site} = reshape(sigma.z,[1,1,d,d]);
 end
 
 %% Time Evolution

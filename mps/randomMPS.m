@@ -3,14 +3,14 @@ function mps = randomMPS(N,D_b,d,direction)
 % then canonizes according to direction specified: left (+1) or right (-1).
 %
 % INPUT
-%   N:              number of sites
-%   D_b:            bond dimension of each size, notice that canonization 
-%                   may change this 
-%   d:              local Hilbert space dimension
-%   direction:      specifies left (-1) or right (+1) canonization. Any
-%                   other value will imply no canonization
+%	N:			number of sites
+%	D_b:		bond dimension of each size, notice that canonization may
+%				change this 
+%	d:			local Hilbert space dimension
+%	direction:	specifies left (-1) or right (+1) canonization. Any other
+%				value will imply no canonization
 % OUTPUT
-%   mps:            resulting random MPS 
+%	mps:	resulting random MPS 
 %              
 mps = cell(1,N);
 mps{1} = randn(1,D_b,d) + 1i*randn(1,D_b,d);

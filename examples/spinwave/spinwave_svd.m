@@ -26,9 +26,9 @@ end
 % Fix boundaries
 U_even{1} = reshape(sigma.id,[1,1,d,d]);
 if mod(N,2)
-    U_odd{N} = reshape(sigma.id,[1,1,d,d]);
+	U_odd{N} = reshape(sigma.id,[1,1,d,d]);
 else
-    U_even{N} = reshape(sigma.id,[1,1,d,d]);
+	U_even{N} = reshape(sigma.id,[1,1,d,d]);
 end
 % Do  compression to merge into a single operator
 U = compressMPO(U_odd,U_even,U_odd); 
@@ -36,7 +36,7 @@ U = compressMPO(U_odd,U_even,U_odd);
 %% Build Initial State
 state = cell(1,N);
 for site = 1:N
-    state{site} = reshape([0,1],[1,1,d]);
+	state{site} = reshape([0,1],[1,1,d]);
 end
 state{1} = reshape([1,0],[1,1,d]);
 
@@ -44,11 +44,11 @@ state{1} = reshape([1,0],[1,1,d]);
 identity = cell(1,N);
 magnetization = cell(N,N);
 for site = 1:N
-    identity{site} = reshape(sigma.id,[1 1 d d]);
+	identity{site} = reshape(sigma.id,[1 1 d d]);
 end
 for site = 1:N
-    magnetization(site,:) = identity;
-    magnetization{site,site} = reshape(sigma.z,[1,1,d,d]);
+	magnetization(site,:) = identity;
+	magnetization{site,site} = reshape(sigma.z,[1,1,d,d]);
 end
 
 maxbond = @(s) max(cellfun(@(x) max(size(x,1),size(x,2)),s));

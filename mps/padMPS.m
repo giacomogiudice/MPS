@@ -4,11 +4,11 @@ function mps_out = padMPS(mps_in,D_max,varargin)
 % canonized the outputted state by specifying a direction.
 %
 % INPUT
-%   mps_in:             cell array corresponding to input MPS
-%   D_max:              maximum bond of output MPS
-%   direction:          (optional) direction of canonization for output MPS
+%	mps_in:		cell array corresponding to input MPS
+%	D_max:		maximum bond of output MPS
+%	direction:	(optional) direction of canonization for output MPS
 % OUTPUT
-%   mps_out:            resulting MPS with additional entries of zeros
+%	mps_out:	resulting MPS with additional entries of zeros
 
 N = length(mps_in);
 d = size(mps_in{1},3);

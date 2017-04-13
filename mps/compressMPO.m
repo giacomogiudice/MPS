@@ -27,8 +27,8 @@ for site = 1:N
 			W = multiply(W,varargin{k}{site});
 		end
 	end
-    [b_1,b_2,~,~] = size(W);
-    U{site} = reshape(W,[b_1,b_2,D*D]);
+	[b_1,b_2,~,~] = size(W);
+	U{site} = reshape(W,[b_1,b_2,D*D]);
 end
 % Compress by cutting down to machine precision
 [U,U_norm] = sweep(U,{},-1);
@@ -40,7 +40,7 @@ for site = 1:N
 end
 % Reshape each element to a rank-4 tensor
 for site = 1:N
-    [b_1,b_2,~,~] = size(U{site});
-    U{site} = reshape(U{site},[b_1,b_2,D,D]);
+	[b_1,b_2,~,~] = size(U{site});
+	U{site} = reshape(U{site},[b_1,b_2,D,D]);
 end
 end

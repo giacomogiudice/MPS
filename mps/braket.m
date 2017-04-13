@@ -4,14 +4,14 @@ function sprod = braket(mps_1,mps_2)
 % notice that the bond dimensions of the MPS does not have to be the same.
 % 
 % INPUT
-%   mps_1, mps_2:   cell-array representations of MPSs to contract, each
-%                   element is a rank-3 tensor with index convention
-%                   (bond,bond,physical)
+%	mps_1, mps_2:	cell-array representations of MPSs to contract, each
+%					element is a rank-3 tensor with index convention
+%					(bond,bond,physical)
 % OUTPUT
-%   sprod:          scalar (hopefully, but not guaranteed) corresponding to
-%                   the scalar product
+%	sprod:	scalar (hopefully, but not guaranteed) corresponding to
+%			the scalar product
 
-N =length(mps_1);
+N = length(mps_1);
 virtual_obs = cell(1,N);
 sprod = sandwich(mps_1,virtual_obs,mps_2);
 end

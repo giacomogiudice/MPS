@@ -5,12 +5,12 @@ function result = apply(O,M)
 % (bond,bond,physical,physical).
 % 
 % INPUT
-%   O:      MPO element, a rank-4 tensor with index convention
-%           (bond,bond,physical,physical)
-%   M:      MPS element, a rank-3 tensor with index convention 
-%           (bond,bond,physical)
+%	O:	MPO element, a rank-4 tensor with index convention
+%		(bond,bond,physical,physical)
+%	M:	MPS element, a rank-3 tensor with index convention 
+%		(bond,bond,physical)
 % OUTPUT
-%   result: corresponding MPS element after application of MPO
+%	result:	corresponding MPS element after application of MPO
 
 result = contract(M,3,3,O,4,4);
 s = size(result);

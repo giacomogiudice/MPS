@@ -4,10 +4,10 @@ function S = swapmatrix(d,N)
 % given by S', since S is unitary
 %
 % INPUT
-%   d:      local Hilbert space dimension
-%   N:      number of sites
+%	d:		local Hilbert space dimension
+%	N:		number of sites
 % OUTPUT
-%   S:      permutation matrix
+%	S:		permutation matrix
 
 
 Z = sparse(d,d);
@@ -20,15 +20,15 @@ combs = fliplr(cell2mat(cellfun(@(v) v(:),c,'UniformOutput',false)));
 
 col = 1;
 for i = 1:length(combs)
-    for j = 1:length(combs)
-        S_prime = sparse(1);
-        for site = 1:N
-            E = Z;
-            E(combs(j,site),combs(i,site)) = 1;
-            S_prime = kron(S_prime,reshape(E,1,[]));
-        end
-        S(col,:) = S_prime;
-        col = col + 1;
-    end
+	for j = 1:length(combs)
+		S_prime = sparse(1);
+		for site = 1:N
+			E = Z;
+			E(combs(j,site),combs(i,site)) = 1;
+			S_prime = kron(S_prime,reshape(E,1,[]));
+		end
+		S(col,:) = S_prime;
+		col = col + 1;
+	end
 end
 end

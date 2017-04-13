@@ -4,10 +4,10 @@ function operator = expandMPO(mpo)
 % systems.
 % 
 % INPUT
-%   mpo:        cell-array of rank-3 tensors representing the MPS. Indexing
-%               convention is (bond,bond,physical,physical)
+%	mpo:		cell-array of rank-3 tensors representing the MPS. Indexing
+%				convention is (bond,bond,physical,physical)
 % OUTPUT
-%   operator:  	matrix representation of the operator
+%	operator:	matrix representation of the operator
 
 N = length(mpo);
 d = size(mpo{1},3);

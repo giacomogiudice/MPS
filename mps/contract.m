@@ -12,11 +12,11 @@ function Z = contract(X,dimX,indX,Y,dimY,indY)
 % multiplication, which MATLAB is very fast at.
 %
 % INPUT
-%   X, Y:       tensors to contract
-%   indX, indY: array of indexes to contract of each tensor
-%   dimX, dimY: an array of the number of indices in X and Y
+%	X, Y:	tensors to contract
+%	indX, indY:	array of indexes to contract of each tensor
+%	dimX, dimY:	an array of the number of indices in X and Y
 % OUTPUT
-%   Z:          resulting tensor after contracting (X,Y) over (indX,indY)
+%	Z:			resulting tensor after contracting (X,Y) over (indX,indY)
 
 % Compute the size of each tensor accounting for singleton dimensions
 Xsize=ones(1,dimX); 
@@ -36,32 +36,32 @@ sizeYr=Ysize(indYr);
 sizeY=Ysize(indY); 
 % If any contracted dimension mismatch
 if any(sizeX ~= sizeY)
-    error('Dimension mismatch in indices provided');
+	error('Dimension mismatch in indices provided');
 end
 
 if isempty(indYr)
-    % If both tensors are fully contracted, place the indices in the correct
-    % order, reshape both into a vector and perform the contraction as a 
-    % vector-vector multiplication
-    if isempty(indXr) 
-        X=permute(X,indX);
-        X=reshape(X,[1,prod(sizeX)]); 
-        Y=permute(Y,indY); 
-        Y=reshape(Y,[prod(sizeY),1]);
-        Z=X*Y; 
-        return
-    % If Y is fully contracted, place the indices in the correct order,
-    % reshape Y into a vector and perform a matrix-vector operation
-    else 
-        X=permute(X,[indXr,indX]);
-        X=reshape(X,[prod(sizeXr),prod(sizeX)]);
-        Y=permute(Y,indY);
-        Y=reshape(Y,[prod(sizeY),1]);
-        Z=X*Y;
-        Xsize=Xsize(indXr);
-        Z=reshape(Z,[Xsize,1]);
-        return
-    end
+	% If both tensors are fully contracted, place the indices in the correct
+	% order, reshape both into a vector and perform the contraction as a 
+	% vector-vector multiplication
+	if isempty(indXr) 
+		X=permute(X,indX);
+		X=reshape(X,[1,prod(sizeX)]); 
+		Y=permute(Y,indY); 
+		Y=reshape(Y,[prod(sizeY),1]);
+		Z=X*Y; 
+		return
+	% If Y is fully contracted, place the indices in the correct order,
+	% reshape Y into a vector and perform a matrix-vector operation
+	else 
+		X=permute(X,[indXr,indX]);
+		X=reshape(X,[prod(sizeXr),prod(sizeX)]);
+		Y=permute(Y,indY);
+		Y=reshape(Y,[prod(sizeY),1]);
+		Z=X*Y;
+		Xsize=Xsize(indXr);
+		Z=reshape(Z,[Xsize,1]);
+		return
+	end
 end
 % Otherwise, both have uncontracted indices. Send summed indices to the 
 % last places of X, send the summed indices to the first places of Y, and

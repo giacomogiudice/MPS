@@ -9,7 +9,7 @@ function [v_out,mk] = exp_arnoldi(v_in,fun,dt,m,tolerance)
 % Expokit package.
 %
 % INPUT
-%   v_in:		input tensor (or pseudo-vector) corresponding to the state
+%	v_in:		input tensor (or pseudo-vector) corresponding to the state
 %				one wants to evolve
 %   fun:		function that computes the application of a pseudo-matrix 
 %				to a pseudo-vector
@@ -18,7 +18,7 @@ function [v_out,mk] = exp_arnoldi(v_in,fun,dt,m,tolerance)
 %				pseudo-vectors to be stored
 %	tolerance:	(optional) precision in the norm of the next Krylov vector
 % OUTPUT
-%   v_out:		output tensor (or pseudo-vector) corresponding to the 
+%	v_out:		output tensor (or pseudo-vector) corresponding to the 
 %				evolved state
 %	mk:			number of additional Krylov pseudo-vectors effectively used
 

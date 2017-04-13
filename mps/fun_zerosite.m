@@ -10,16 +10,15 @@ function handle = fun_zerosite(left,right)
 %                 -C-	
 %
 % INPUT
-%   left,right:	partial contraction of the left and right blocks 
+%	left,right:	partial contraction of the left and right blocks 
 %				respectively (see block functions)
 % OUTPUT
-% 	handle:		function handle to compute the contraction for a given 
+%	handle:		function handle to compute the contraction for a given 
 %				carryover
 
-	function W = new_element(C)
-		W = contract(right,3,2,C,2,2);
-		W = contract(left,3,[2,3],W,3,[3,2]);
-	end
-	handle = @new_element;
+function W = new_element(C)
+	W = contract(right,3,2,C,2,2);
+	W = contract(left,3,[2,3],W,3,[3,2]);
 end
-
+handle = @new_element;
+end

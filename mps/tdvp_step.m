@@ -1,4 +1,4 @@
-function [mps,err] = tdvp_step(mps,mpo,dt)
+function mps = tdvp_step(mps,mpo,dt)
 % Computes a single time step of the Time-Dependent Variational Principle 
 % (TDVP) algorithm. This is performed with two DMRG-style sweeps of half 
 % the time step provided. Each site is then evolved with 4th order
@@ -13,8 +13,6 @@ function [mps,err] = tdvp_step(mps,mpo,dt)
 %	dt:		time step for the evolution step
 % OUTPUT
 %	mps:	cell array corresponding to the evolved MPS
-%	err:	error in the time step, calculated as the norm of the component
-%			projected outside the MPS manifold
 
 N = length(mps);
 dt_half = dt/2;
@@ -52,8 +50,7 @@ end
 fun = fun_onesite(mpo{N},blocks{N},blocks{N+1});
 mps{N} = integrator(mps{N},fun,-1i*dt_half);
 [mps{N},carryover] = canonize_fast(mps{N},+1);
-% Compute error of first sweep by measuring the norm of the new state 
-err = 1 - abs(carryover);
+
 % Sweep right -> left
 for site = N:(-1):2
 	% Compute 'one-site' effective Hamiltonian
@@ -76,8 +73,6 @@ end
 fun = fun_onesite(mpo{1},blocks{1},blocks{2});
 mps{1} = integrator(mps{1},fun,-1i*dt_half);
 [mps{1},carryover] = canonize_fast(mps{1},-1);
-% Compute error of second sweep by measuring the norm of the new state 
-err = err + (1 - abs(carryover));
 end
 
 function v_out = RK4_step(v_in,fun,dt)

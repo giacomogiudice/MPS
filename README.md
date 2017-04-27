@@ -4,7 +4,8 @@ by Giacomo Giudice
 ## Introduction
 A (very) small library for to simulate many-body quantum systems with _Matrix Product States_ (MPS).
 It is designed to be scalable and performant at the same time maintainign the flexibility of __MATLAB__.
-The main focus is on time evolution, both through Time-Evolving Block Decimation (TEBD) using the Trotter-Suzuki decomposition, as well as the Time-Dependent Variational Principle (TDVP). 
+It is mostly focused on time evolution, both through Time-Evolving Block Decimation (TEBD) using the Trotter-Suzuki decomposition, as well as the Time-Dependent Variational Principle (TDVP).
+It also features single-site Iterative Variational Optimization to find ground states of Hamiltonian systems.
 
 ## Features
 * __Scalable__ All routines are written with performance in mind, all underlying contractions are optimal for large bond dimension _D_. The complexity should never be more than _O(D<sup>3</sup>)_.
@@ -13,7 +14,7 @@ The main focus is on time evolution, both through Time-Evolving Block Decimation
 
 ## Getting Started
 Add a `addpath('<path>/mps')` and you are good to go.
-A good place to start is the `examples` folder. There are currently some minimal scripts of different methods for time-evolution.
+A good place to start is the `examples` folder. There are currently some MWEs of different methods for time-evolution in `examples/spinwave` and some examples of ground state estimation routines in `examples/ground_states`.
 Additionally, the `test` folder demonstrates the use of the elementary functions.
 
 ## GPU Support

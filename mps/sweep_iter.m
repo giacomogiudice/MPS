@@ -13,7 +13,7 @@ function [mps_out,iter,err] = sweep_iter(mps_in,mpo,mps_out,iter_max,tolerance,m
 %	tolerance:			(optional) stopping condition on the relative 
 %						improvement of the fidelity. The iterative routine
 %						is stopped at the k-th iteration when
-%						|fidelity[k+1] - fidelity[k]| < tolerance*fidelity[k+1]
+%						|fidelity[k] - fidelity[k-1]| < tolerance*fidelity[k]
 %	max_storage_size:	(optional) maximum number of bytes available to 
 %						store the full application of the MPO to  the MPS.
 %						If the actual size is smaller that this limit, the

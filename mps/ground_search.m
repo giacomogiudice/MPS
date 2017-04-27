@@ -19,8 +19,8 @@ function [mps,E,iter] = ground_search(mps,mpo,iter_max,precision,verbose)
 %	iter_max:	(optional) maximum number of iterations
 %	precision:	(optional) stopping condition on the relative improvement
 %				of the eigenvalue. The iterative routine is stopped at the
-%				k-th iteration when |E[k+1] - E[k]| < precision*|E[k+1]|
-%   verbose:	(optional) setting this to true will output on the screen
+%				k-th iteration when |E[k] - E[k-1]| < precision*|E[k]|
+%	verbose:	(optional) setting this to true will output on the screen
 %				the results at each iteration
 % OUTPUT
 %	mps:		approximation of the eigenstate in right canonization
@@ -73,7 +73,6 @@ for iter = 1:iter_max
 		% Compute block update
 		blocks{site} = update_block(blocks{site+1},mps{site},mpo{site},mps{site},-1);
 	end
-
 	% Print information to screen
 	if verbose
 		if iter == 1

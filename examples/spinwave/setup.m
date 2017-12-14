@@ -12,7 +12,7 @@ D_max = 10;			% Maximum bond dimension for SVD
 epsilon = 1e-6;		% Truncation error for SVD (sum of the square of the singular values to discart)
 iter_max = 100;		% Maximum number of iterative sweeps
 D_static = 2;		% Fixed bond dimension for iterative compression and TDVP
-tolerance = 1e-8;	% Tolerance in fluctuations of the norm for iterative compression
+tolerance = 1e-4;	% Tolerance for iterative compression
 
 % Other Data Structures
 d = 2;				% Local Hilbert space size

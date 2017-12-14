@@ -16,7 +16,7 @@ function obs = measure(obs_set,density_mps,obs_type)
 % OUTPUT
 %	obs:  			array of corresponding observable for each site
 
-M = length(density_mps);
+N = length(density_mps);
 
 switch obs_type
 case 'single'
@@ -30,7 +30,7 @@ case 'neighbor'
 		obs(site) = braket(obs_set{site},density_mps);
 	end
 case 'set'
-	obs = zeros(M,N);
+	obs = zeros(size(obs_set));
 for i = 1:size(obs_set,1)
 	for j = 1:size(obs_set,2)
 		obs(i,j) = braket(obs_set{i,j},density_mps);

@@ -1,10 +1,14 @@
 # Matrix Product States 
 by Giacomo Giudice
 
+## Notes
+This has been tested using __MATLAB__ R2016a down to R2014a. 
+Given Mathwork's history of releasing non-backwards-compatible updates, things will probably break in future versions.  
+
 ## Introduction
 A (very) small library for to simulate many-body quantum systems with _Matrix Product States_ (MPS).
-It is designed to be scalable and performant at the same time maintainign the flexibility of __MATLAB__.
-It is mostly focused on time evolution, both through Time-Evolving Block Decimation (TEBD) using the Trotter-Suzuki decomposition, as well as the Time-Dependent Variational Principle (TDVP).
+It is designed to be scalable and performant at the same time staying flexible enough to be hackable.
+It is mostly focused on time evolution of _finite_ MPS, both through Time-Evolving Block Decimation (TEBD) using the Trotter-Suzuki decomposition, as well as the Time-Dependent Variational Principle (TDVP).
 It also features single-site Iterative Variational Optimization to find ground states of Hamiltonian systems.
 
 ## Features

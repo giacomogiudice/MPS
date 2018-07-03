@@ -11,7 +11,7 @@ function [mps_out,mps_norm] = sweep(mps_in,mpo,direction,D_max,epsilon)
 % OUTPUT
 %	mps_out:        resulting MPS, in the opposite canonization of the
 %					input MPS
-%	mps_norm:		square of the norm of the input MPS
+%	mps_norm:		norm of the output MPS
 
 if nargin == 3
 	if isempty(mpo)
@@ -38,23 +38,24 @@ mps_out = cell(1,N);
 switch direction
 	case +1 % Left sweep
 		mps_out{1} = mult(mpo{1},mps_in{1});
-		[mps_out{1},SV] = canonize(mps_out{1},1,D_max,epsilon);
+		[mps_out{1},carryover] = canonize(mps_out{1},1,D_max,epsilon);
 		for site = 2:N
 			mps_out{site} = mult(mpo{site},mps_in{site});
-			mps_out{site} = contract(SV,2,2,mps_out{site},3,1);
-			[mps_out{site},SV] = canonize(mps_out{site},1,D_max,epsilon);
+			mps_out{site} = contract(carryover,2,2,mps_out{site},3,1);
+			[mps_out{site},carryover] = canonize(mps_out{site},1,D_max,epsilon);
 		end
-		mps_norm = SV;
 		
 	case -1 % Right sweep
 		mps_out{N} = mult(mpo{N},mps_in{N});
-		[mps_out{N},US] = canonize(mps_out{N},-1,D_max,epsilon);
+		[mps_out{N},carryover] = canonize(mps_out{N},-1,D_max,epsilon);
 		for site = (N-1):(-1):1
 			mps_out{site} = mult(mpo{site},mps_in{site});
-			mps_out{site} = permute(contract(mps_out{site},3,2,US,2,1),[1 3 2]);
-			[mps_out{site},US] = canonize(mps_out{site},-1,D_max,epsilon);
+			mps_out{site} = permute(contract(mps_out{site},3,2,carryover,2,1),[1 3 2]);
+			[mps_out{site},carryover] = canonize(mps_out{site},-1,D_max,epsilon);
 		end
-		mps_norm = US;
 end
+% Put the phase in the last term
+mps_norm = abs(carryover);
+mps_out{site} = sign(carryover)*mps_out{site};
 end
 

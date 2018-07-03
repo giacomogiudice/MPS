@@ -1,4 +1,4 @@
-function [U,U_norm] = compressMPO(varargin)
+function [U,U_norm] = compressMPO(mpo_list,D_max)
 % Combine different operators, and then compress the resulting operator
 % by cutting the zeros. The norm is distributed evenly across all elements.
 %
@@ -10,21 +10,17 @@ function [U,U_norm] = compressMPO(varargin)
 %						input operators
 %	U_norm:				Frobenius norm of the resulting operator
 
-for n_mpo = 1:length(varargin)
-	if ~iscell(varargin{n_mpo})
-		break;
-	end
-end
+n_mpo = length(mpo_list);
 
-N = length(varargin{1});
-D = size(varargin{1}{1},3);
+N = length(mpo_list{1});
+D = size(mpo_list{1}{1},3);
 % Combine and reshape into an MPS
 U = cell(1,N);
 for site = 1:N
-		W = varargin{1}{site};
+		W = mpo_list{1}{site};
 	if n_mpo > 1
 		for k = 2:n_mpo
-			W = multiply(W,varargin{k}{site});
+			W = multiply(W,mpo_list{k}{site});
 		end
 	end
 	[b_1,b_2,~,~] = size(W);
@@ -32,8 +28,7 @@ for site = 1:N
 end
 % Compress by cutting down to machine precision
 [U,U_norm] = sweep(U,{},-1);
-[U,U_sign] = sweep(U,{},1,1e6,eps);
-U_norm = real(U_norm*U_sign);
+U = sweep(U,{},1,D_max,eps);
 % Distribute the norm along all sites
 for site = 1:N
 	U{site} = U_norm^(1/N)*U{site};

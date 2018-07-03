@@ -58,8 +58,8 @@ maxbond = @(s) max(cellfun(@(x) max(size(x,1),size(x,2)),s));
 
 %% Time Evolution
 magn_iter = zeros(N,time_steps);
-compression_iter = zeros(1,time_steps);
 compression_err = zeros(1,time_steps);
+compression_iter = zeros(1,time_steps);
 
 % Values for t=0
 state = sweep(state,{},-1);
@@ -67,10 +67,10 @@ magn_iter(:,1) = real(expectationvalue(magnetization,state));
 
 % Trotter-Suzuki order 2
 for step = 2:time_steps
-	[state,iter,err] = sweep_iter(state,U,randomMPS(N,D_static,d,1),iter_max,tolerance);
+	[state,state_norm,iter] = sweep_iter(state,U,randomMPS(N,D_static,d,1),iter_max,tolerance);
 	magn_iter(:,step) = real(expectationvalue(magnetization,state));
+	compression_err(step) = abs(1 - state_norm);
 	compression_iter(step) = iter;
-	compression_err(step) = err;
 end
 
 %% Save To File

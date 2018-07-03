@@ -1,4 +1,4 @@
-function [mps_out,iter,err] = sweep_iter(mps_in,mpo,mps_out,iter_max,tolerance,max_storage_size)
+function [mps_out,mps_norm,iter] = sweep_iter(mps_in,mpo,mps_out,iter_max,tolerance,max_storage_size)
 % Computes a DMRG-style sweep on an MPS, applying some operator in MPO form
 % and then doing canonization and decimation using the iterative method.
 % WARNING: The MPS corresponding to the guess must be left-canonized (+1),
@@ -20,9 +20,10 @@ function [mps_out,iter,err] = sweep_iter(mps_in,mpo,mps_out,iter_max,tolerance,m
 %						product MPO*MPS will be cached
 % OUTPUT
 %	mps_out:			resulting MPS after computation in right canonization
+%	mps_norm:			overlap between the compressed MPS and the full MPS,
+%						for normalized states, the compression error can be 
+%						estimated as err = 1 - mps_norm
 %	iter:				number of iterations in the optimization
-%	err:				error in compressing, computed as the distance 
-%						between the compressed MPS and the full MPS
 
 % Handle optional arguments
 if nargin < 6
@@ -64,7 +65,7 @@ for site = N:(-1):2
 	blocks{site} = update_block(blocks{site+1},mps_out{site},[],target,-1);
 end
 
-fidelity_prev = 0;
+mps_norm_prev = 0;
 for iter = 1:iter_max
 	% Optimization sweep left -> right
 	for site = 1:(N-1)
@@ -93,18 +94,19 @@ for iter = 1:iter_max
 		blocks{site} = update_block(blocks{site+1},mps_out{site},[],target,-1);
 
 	end
-	% Do same for first site, except update
+	% Do same for first site, and compute norm
 	target = mult(mpo{1},mps_in{1},1);
 	mps_out{1} = optimization_step(target,blocks{1},blocks{2});
 	mps_out{1} = canonize_fast(mps_out{1},-1);
-	fidelity = abs(update_block(blocks{2},mps_out{1},[],target,-1));
+	carryover = update_block(blocks{2},mps_out{1},[],target,-1);
+	mps_norm = abs(carryover);
+	mps_out{1} = sign(carryover)*mps_out{1};
 	% Calculate stopping condition
-	if abs(fidelity-fidelity_prev) < tolerance*fidelity
+	if abs(mps_norm-mps_norm_prev) < tolerance*mps_norm
 		break;
 	end
-	fidelity_prev = fidelity;
+	mps_norm_prev = mps_norm;
 end
-err = 1 - fidelity;
 end
 
 function new_guess = optimization_step(target,block_left,block_right)

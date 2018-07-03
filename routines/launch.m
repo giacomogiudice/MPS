@@ -28,8 +28,6 @@ parrank = str2num(parrank);
 if ~isempty(parrank) 
     rng(unixtime + parrank);
     fileout = [fileout '_r' num2str(parrank)];
-    % m = matfile(fileout);
-    % state = m.state;
 else
     parrank = 0;
     disp('Warning: no parallel rank detected');
@@ -37,9 +35,8 @@ end
 fprintf('Saving at "%s". Running...\n',fileout)
 
 tic
-chainDiffus;
-% chainJumps;
-% chainDM;
+disp('<Insert your routine here>')
+%    ...    %
 toc
 fprintf('Rank %d done\n',parrank);
 end

@@ -34,7 +34,7 @@ end
 if nargin < 4
 	precision = eps;
 end
-if nargin == 3
+if nargin < 3
 	iter_max = 100;
 end
 

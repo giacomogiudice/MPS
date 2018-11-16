@@ -12,7 +12,7 @@ function result = apply(O,M)
 % OUTPUT
 %	result:	corresponding MPS element after application of MPO
 
-result = contract(M,3,3,O,4,4);
+result = ncon({O,M},{[-1,-3,-5,1],[-2,-4,1]});
 s = size(result);
-result = reshape(permute(result,[3,1,4,2,5]),[s(1)*s(3),s(2)*s(4),s(5)]);
+result = reshape(result,[s(1)*s(2),s(3)*s(4),s(5)]);
 end

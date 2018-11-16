@@ -1,8 +1,9 @@
 function mps = tdvp_step(mps,mpo,dt)
 % Computes a single time step of the Time-Dependent Variational Principle 
 % (TDVP) algorithm. This is performed with two DMRG-style sweeps of half 
-% the time step provided. Each site is then evolved with 4th order
-% Runge-Kutta integration.
+% the time step provided. Each site is then evolved with a local Arnoldi
+% approximation. One can set to Runge-Kutta by changing the integrator
+% function handle.
 % WARNING: The input MPS must be right-canonized (-1), and so will be the
 % output MPS.
 %
@@ -43,7 +44,7 @@ for site = 1:(N-1)
 	% Evolve the carryover backward
 	carryover = integrator(carryover,fun,1i*dt_half);
 	% Finally contract the carryover with the next site and update block
-	mps{site+1} = contract(carryover,2,2,mps{site+1},3,1);
+	mps{site+1} = ncon({carryover,mps{site+1}},{[-1,1],[1,-2,-3]});
 	blocks{site+1} = new_block;
 end
 % Do only the forward step for the last site
@@ -66,7 +67,7 @@ for site = N:(-1):2
 	% Evolve the carryover backward
 	carryover = integrator(carryover,fun,1i*dt_half);
 	% Finally contract the carryover with the next site and update block
-	mps{site-1} = permute(contract(mps{site-1},3,2,carryover,2,1),[1 3 2]);
+	mps{site-1} = ncon({mps{site-1},carryover},{[-1,1,-3],[1,-2]});
 	blocks{site} = new_block;
 end
 % Do only the forward step for the first site

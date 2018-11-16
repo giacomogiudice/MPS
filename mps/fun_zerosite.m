@@ -17,8 +17,7 @@ function handle = fun_zerosite(left,right)
 %				carryover
 
 function W = new_element(C)
-	W = contract(right,3,2,C,2,2);
-	W = contract(left,3,[2,3],W,3,[3,2]);
+	W = ncon({left,C,right},[-1,1,3],[1,2],[-2,2,3]);
 end
 handle = @new_element;
 end

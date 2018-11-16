@@ -28,21 +28,16 @@ function new_block = update_block(prev_block,M_1,O,M_2,direction)
 
 switch direction
 	case +1 % left -> right
-		new_block = contract(M_2,3,1,prev_block,3,2);
-		if ~isempty(O)
-			new_block = contract(new_block,4,[2,4],O,4,[4,1]);
-			new_block = contract(conj(M_1),3,[1,3],new_block,4,[2,4]);
+		if isempty(O)
+			new_block = ncon({prev_block,conj(M_1),M_2},{[1,2],[1,-1,3],[2,-2,3]});
 		else
-			new_block = contract(conj(M_1),3,[1,3],new_block,4,[3,2]);
+			new_block = ncon({prev_block,conj(M_1),O,M_2},{[1,2,3],[1,-1,4],[3,-3,4,5],[2,-2,5]});
 		end
-
 	case -1 % right -> left
-		new_block = contract(M_2,3,2,prev_block,3,2);
-		if ~isempty(O)
-			new_block = contract(new_block,4,[2,4],O,4,[4,2]);
-			new_block = contract(conj(M_1),3,[2,3],new_block,4,[2,4]);
+		if isempty(O)
+			new_block = ncon({prev_block,conj(M_1),M_2},{[1,2],[-1,1,3],[-2,2,3]});
 		else
-			new_block = contract(conj(M_1),3,[2,3],new_block,4,[3,2]);
+			new_block = ncon({prev_block,conj(M_1),O,M_2},{[1,2,3],[-1,1,4],[-3,3,4,5],[-2,2,5]});
 		end
 end
 end

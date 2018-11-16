@@ -13,19 +13,17 @@ function mps_out = padMPS(mps_in,D_max,varargin)
 N = length(mps_in);
 d = size(mps_in{1},3);
 mps_out = cell(1,N);
-full_size = cell(1,N);
 
-% Build cell array containing size of output MPS
-for site = 1:(N/2)
-	full_size{site} = [min(d^(site-1),D_max),min(d^site,D_max)];
-end
+bnd = zeros(2,N);
+first_half = floor(N/2);
+bnd(:,1:first_half) = [d.^((1:first_half)-1);d.^(1:first_half)];
 if mod(N,2)
-	site = site + 1;
-	full_size{site} = [min(d^(site-1),D_max),min(d^(site-1),D_max)];
+	first_half = first_half + 1;
+	bnd(:,first_half) = [d^(first_half-1);d^(first_half-1)];	
 end
-for site = (site+1):N
-	full_size{site} = [min(d^(N-site+1),D_max),min(d^(N-site),D_max)];
-end
+first_half = first_half + 1;
+bnd(:,first_half:N) = [d.^(N+1-(first_half:N));d.^(N-(first_half:N))];
+bnd = min(bnd,D_max);
 
 % Construct output MPS
 for site = 1:N
@@ -35,7 +33,7 @@ for site = 1:N
 		mps_out = mps_in;
 		return
 	end
-	diff_size = full_size{site} - [D_1,D_2];
+	diff_size = bnd(:,site)' - [D_1,D_2];
 	if any(diff_size > 0)
 		for k = 1:d
 			mps_out{site}(:,:,k) = blkdiag(mps_in{site}(:,:,k),zeros(diff_size));

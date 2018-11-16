@@ -14,35 +14,27 @@ if nargin == 2
 	tolerance = 1e-10;
 	
 if ~iscell(mps)
-	disp('Expected cell array as first argument');
-	return
+	error('Expected cell array as first argument');
 end
 
 N = length(mps);
 d = size(mps{1},3);
 
-if direction == 1
-	for i = 1:N
-		s = 0;
-		for sigma= 1:d
-			s = s + mps{i}(:,:,sigma)'*mps{i}(:,:,sigma);
-		end
-		if norm(s - eye(length(s))) > tolerance
-			s = false;
-			return
-		end
-	end
-elseif direction == -1
-	for i = 1:N
-		s = 0;
-		for sigma= 1:d
-			s = s + mps{i}(:,:,sigma)*mps{i}(:,:,sigma)';
-		end
-		if norm(s - eye(length(s))) > tolerance
-			s = false;
-			return
-		end
-	end   
-end
 s = true;
+blk = 1;
+if direction == 1
+	ind = 1:N;
+elseif direction == -1
+	ind = N:(-1):1;
+else
+	error('Unrecognized direction %d.',direction);
+end
+
+for site = ind
+	blk = update_block(blk,mps{site},{},mps{site},direction);
+	if norm(blk - eye(size(blk))) > tolerance
+		s = false;
+		return
+	end
+end
 end

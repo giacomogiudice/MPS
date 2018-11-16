@@ -17,14 +17,14 @@ switch direction
 	case +1 % Left sweep
 		[mps_out{1},carryover] = canonize_fast(mps_in{1},1);
 		for site = 2:N
-			mps_out{site} = contract(carryover,2,2,mps_in{site},3,1);
+			mps_out{site} = ncon({carryover,mps_in{site}},{[-1,1],[1,-2,-3]});
 			[mps_out{site},carryover] = canonize_fast(mps_out{site},1);
 		end
 		
 	case -1 % Right sweep
 		[mps_out{N},carryover] = canonize_fast(mps_in{N},-1);
 		for site = (N-1):(-1):1
-			mps_out{site} = permute(contract(mps_in{site},3,2,carryover,2,1),[1 3 2]);
+			mps_out{site} = ncon({mps_in{site},carryover},{[-1,1,-3],[1,-2]});
 			[mps_out{site},carryover] = canonize_fast(mps_out{site},-1);
 		end
 end

@@ -27,7 +27,8 @@ function [mps_out,mps_norm,iter] = sweep_iter(mps_in,mpo,mps_out,iter_max,tolera
 
 % Handle optional arguments
 if nargin < 6
-	max_storage_size = inf;
+	max_storage_size = get_free_memory();
+	max_storage_size
 end
 if nargin < 5
 	tolerance = 1e-6;
@@ -102,7 +103,7 @@ for iter = 1:iter_max
 	mps_norm = abs(carryover);
 	mps_out{1} = sign(carryover)*mps_out{1};
 	% Calculate stopping condition
-	if abs(mps_norm-mps_norm_prev) < tolerance*mps_norm
+	if abs(mps_norm-mps_norm_prev) < tolerance*max(mps_norm,1)
 		break;
 	end
 	mps_norm_prev = mps_norm;
@@ -124,10 +125,35 @@ function bytes = predict_product_size(mpo,mps)
 %	O:		1d cell array representing an MPO 
 %	M:		1d cell array representing an MPS
 % OUTPUT
-%	nBytes:	number of bytes corresponding to MPO*MPS
+%	bytes:	number of bytes corresponding to MPO*MPS
 
 complexToBytes = 16;
 
 nComplex = sum(cellfun(@(W,M) size(W,1)*size(W,2)*prod(size(M)),mpo,mps));
 bytes = complexToBytes*nComplex;
+end
+
+function bytes = get_free_memory()
+% Get the available memory in the current system.
+% OUTPUT
+%	n:	available memory in bytes
+bytes = 0;
+if ispc
+	sys = memory;
+    bytes = sys.PhysicalMemory.Available;
+elseif ismac
+	[s1,out] = system('vm_stat| grep "free"');
+	r = regexp(out,'\d*','match');
+	[s2,out] = system('getconf PAGESIZE');
+	if s1 == 0 & s2 == 0 & length(r) > 0
+		bytes = str2num(r{1})*str2num(out);
+	end
+elseif isunix
+    mem=sscanf(out,'%f  free memory');
+	[s,out] = system('free -b| grep "Mem"');
+	r = regexp(out,'\d*','match');
+	if s == 0 & length(r) >= 3
+		bytes = str2num(r{3});
+	end
+end
 end

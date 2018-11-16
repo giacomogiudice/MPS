@@ -1,15 +1,14 @@
-function [mps,E,iter] = ground_search(mps,mpo,iter_max,precision,verbose)
-% In the spirit of DMRG, finds an MPS approximation of the state that 
-% minimizes of the function <mps|mpo|mps> - E<mps|mps>. This problem is
+function [mps,energy,iter] = ground_search(mps,mpo,iter_max,precision,verbose)
+% In the spirit of DMRG, finds an MPS approximation of the state which 
+% minimizes of the function <mps|mpo|mps>/<mps|mps>. This problem is
 % iteratively approximated by solving a local eigenvalue problem.
 % The algorithm should converge monotonically towards a local minima,
 % convergence towards a global minimum is not guaranteed. The result 
 % should be checked with different randomized initial states and/or larger
 % bond dimension. If the algorithm has difficulties converging, the 
 % precision might be too demanding or the bond dimension might be too low.
-% Generally the latter will significantly improve convergence. 
-% WARNING: The input MPS must be right-canonized (-1), and so will be the
-% output MPS.
+% WARNING: The input MPS must be left-canonized (+1), while the output MPS
+% will be right-canonized (-1).
 %
 % INPUT
 %	mps_in:		cell array corresponding to input MPS, usually a random 
@@ -19,13 +18,14 @@ function [mps,E,iter] = ground_search(mps,mpo,iter_max,precision,verbose)
 %	iter_max:	(optional) maximum number of iterations
 %	precision:	(optional) stopping condition on the relative improvement
 %				of the eigenvalue. The iterative routine is stopped at the
-%				k-th iteration when |E[k] - E[k-1]| < precision*|E[k]|
+%				k-th iteration when
+%				|energy[k] - energy[k-1]| < precision*max(|energy[k]|,1);
 %	verbose:	(optional) setting this to true will output on the screen
 %				the results at each iteration
 % OUTPUT
 %	mps:		approximation of the eigenstate in right canonization
-%	E:			approximation of the smallest real eigenvalue		
-%	iter:		number of iterations in the optimization
+%	energy:		approximation of the smallest real eigenvalue		
+%	iter:		number of iterations used in the optimization
 
 % Handle optional arguments
 if nargin < 5
@@ -47,7 +47,10 @@ blocks{N+1} = 1;
 for site = N:(-1):2
 	blocks{site} = update_block(blocks{site+1},mps{site},mpo{site},mps{site},-1);
 end
-
+energy_prev = update_block(blocks{2},mps{1},mpo{1},mps{1},-1);
+if verbose
+	fprintf('Iter\t      Energy\t Energy Diff\tLap Time [s]\n')
+end
 for iter = 1:iter_max
 	if verbose, tic; end
 	% Sweep left -> right
@@ -67,7 +70,7 @@ for iter = 1:iter_max
 		% Compute 'one-site' effective Hamiltonian
 		fun = fun_onesite(mpo{site},blocks{site},blocks{site+1});
 		% Solve the local problem
-		[mps{site},E] = optimization_step(mps{site},fun);
+		[mps{site},energy] = optimization_step(mps{site},fun);
 		% Canonize the new element
 		[mps{site},carryover] = canonize_fast(mps{site},-1);
 		% Compute block update
@@ -75,32 +78,15 @@ for iter = 1:iter_max
 	end
 	% Print information to screen
 	if verbose
-		if iter == 1
-			fprintf('iter: %d,\teigenvalue: %.6g,\timprovement: N/A\tlap time: %.1f s\n',iter,E,toc);
-		else
-			fprintf('iter: %d,\teigenvalue: %.6g,\timprovement: %.3g\tlap time: %.1f s\n',iter,E,abs((E - E_prev)/E),toc);
-		end
+		fprintf('%4d\t%12g\t%12g\t%12.1f\n',iter,energy,energy_prev - energy,toc);
 	end
 	% Stopping condition on the improvement
-	if iter > 1 && abs(E - E_prev) < precision*abs(E)
+	if iter > 1 && abs(energy - energy_prev) < precision*max(abs(energy),1)
 		break;
 	end
-	E_prev = E;
+	energy_prev = energy;
 end
 % Right-canonize last site
-mps{1} = permute(contract(mps{1},3,2,carryover,2,1),[1 3 2]);
+mps{1} = ncon({mps{1},carryover},{[-1,1,-3],[1,-2]});
 mps{1} = canonize_fast(mps{1},-1);
-end
-
-
-function [M,E] = optimization_step(M,fun)
-	d_M = size(M);
-	v_fun = @(v) reshape(fun(reshape(v,d_M)),[],1);
-	% Options for eigs routine
-	options.isreal = 0;
-	options.issym = 1;
-	options.v0 = reshape(M,[],1);
-	% Find smallest real eigenvalue
-	[M,E] = eigs(v_fun,prod(d_M),1,'sr',options);
-	M = reshape(M,d_M);
 end

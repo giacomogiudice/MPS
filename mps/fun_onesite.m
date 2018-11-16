@@ -17,9 +17,7 @@ function handle = fun_onesite(O,left,right)
 %				element
 
 function W = new_element(M)
-	W = contract(right,3,2,M,3,2);
-	W = contract(W,4,[2,4],O,4,[2,4]);
-	W = contract(left,3,[2,3],W,4,[2,3]);
+	W = ncon({left,M,O,right},{[-1,1,2],[1,4,3],[2,5,-3,3],[-2,4,5]});
 end
 handle = @new_element;
 end

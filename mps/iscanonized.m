@@ -14,7 +14,7 @@ function s = iscanonized(mps,direction,tolerance)
 
 if nargin == 2
 	tolerance = eps;
-	
+end
 if ~iscell(mps)
 	error('Expected cell array as first argument');
 end
@@ -23,6 +23,7 @@ N = length(mps);
 d = size(mps{1},3);
 
 s = true;
+D_max = 1;
 blk = 1;
 if direction == 1
 	ind = 1:N;
@@ -34,7 +35,8 @@ end
 
 for site = ind
 	blk = update_block(blk,mps{site},{},mps{site},direction);
-	if norm(blk - eye(size(blk)),'fro') > tolerance*prod(size(blk))
+	D_max = max([D_max,size(mps{site},1),size(mps{site},2)]);
+	if norm(blk - eye(size(blk)),'fro') > tolerance*D_max^2
 		s = false;
 		return
 	end

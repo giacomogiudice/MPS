@@ -8,26 +8,28 @@
 clear
 
 %% Parameters
-N = 30;		% Number of sites
-D = 25;		% Bond dimension
-g = 0.0;	% Transverse field strength
-precision = 1e-8;
+N = 30;			% Number of sites
+D = [8 16 24];	% Bond dimension
+g = 0.22;		% Transverse field strength
 
-sigma = struct('x',[0,1;1,0],'y',[0,-1i;1i,0],'z',[1,0;0,-1],'plus',[0,1;0,0],'minus',[0,0;1,0],'id',eye(2));
+sx = [0,1;1,0];
+sy = [0,-1i;1i,0];
+sz = [1,0;0,-1];
+si = [1,0;0,1];
 
 %% Define Hamiltonian Operator
 d = 2;
 D_O = 5;
 W = zeros(D_O,D_O,d,d);
-W(1,1,:,:) = sigma.id;
-W(2,1,:,:) = sigma.x;
-W(3,1,:,:) = sigma.y;
-W(4,1,:,:) = sigma.z;
-W(5,1,:,:) = g*sigma.x;
-W(5,2,:,:) = sigma.x;
-W(5,3,:,:) = sigma.y;
-W(5,4,:,:) = sigma.z;
-W(5,5,:,:) = sigma.id;
+W(1,1,:,:) = si;
+W(2,1,:,:) = sx;
+W(3,1,:,:) = sy;
+W(4,1,:,:) = sz;
+W(5,1,:,:) = -g*sz;
+W(5,2,:,:) = sx;
+W(5,3,:,:) = sy;
+W(5,4,:,:) = sz;
+W(5,5,:,:) = si;
 
 H = cell(1,N);
 H{1} = W(D_O,:,:,:);
@@ -36,38 +38,22 @@ for i = 2:N-1
 end
 H{N} = W(:,1,:,:);
 
-%% Create Observables
-identity = cell(1,N);
-magnetization = cell(N,N);
-correlation = cell(N,N);
-for site = 1:N
-    identity{site} = reshape(sigma.id,[1 1 d d]);
-end
-
-for site = 1:N
-    magnetization(site,:) = identity;
-    magnetization{site,site} = reshape(sigma.z,[1,1,d,d]);
-    correlation{site,1} = reshape(sigma.z,[1 1 d d]);
-    correlation{site,site} = reshape(sigma.z,[1 1 d d]);
-end
-correlation{1,1} = reshape(sigma.z*sigma.z,[1 1 d d]);
-
 %% Do Optimization
-state = sweep(randomMPS(N,D,d,1),{},-1);
-[state,E,iter] = ground_search(state,H,100,precision,true);
+[state,output] = variational(H,D);
 
 %% Plot Observables
-magn = real(expectationvalue(magnetization,state));
-corr_zz = real(expectationvalue(correlation,state));
+magn = real(expectationvalue(state,{sz}));
+corr_zz = real(expectationvalue(state,{sz,sz}));
 
-figure
+figure(1)
 plot(1:N,magn,'s--');
 xlabel('$k$')
 ylabel('$\langle\sigma^z_k\rangle$')
 ylim([-1 1])
-figure
+
+figure(2)
 hold on
-plot(2:N,abs(corr_zz(2:end)))
+plot(1:(N-1),abs(corr_zz))
 xlabel('$k$')
 ylabel('$|\langle\sigma^z_1\sigma^z_k\rangle|$')
 set(gca,'yscale','log')

@@ -33,26 +33,15 @@ state{1} = reshape([1,0],[1,1,d]);
 % Pad state
 state = padMPS(state,D_static,-1);
 
-%% Create Observables
-identity = cell(1,N);
-magnetization = cell(N,N);
-for site = 1:N
-	identity{site} = reshape(sigma.id,[1 1 d d]);
-end
-for site = 1:N
-	magnetization(site,:) = identity;
-	magnetization{site,site} = reshape(sigma.z,[1,1,d,d]);
-end
-
 %% Time Evolution
 magn_tdvp = zeros(N,time_steps);
 % Values for t=0
-magn_tdvp(:,1) = real(expectationvalue(magnetization,state));
+magn_tdvp(:,1) = real(expectationvalue(state,{sigma.z}));
 % Trotter-Suzuki order 2
 for step = 2:time_steps
 	state = padMPS(state,D_static,-1);
 	state = tdvp_step(state,H,dt);
-	magn_tdvp(:,step) = real(expectationvalue(magnetization,state));
+	magn_tdvp(:,step) = real(expectationvalue(state,{sigma.z}));
 end
 
 %% Save To File

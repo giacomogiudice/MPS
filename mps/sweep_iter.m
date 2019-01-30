@@ -23,12 +23,11 @@ function [mps_out,mps_norm,iter] = sweep_iter(mps_in,mpo,mps_out,iter_max,tolera
 %	mps_norm:			overlap between the compressed MPS and the full MPS,
 %						for normalized states, the compression error can be 
 %						estimated as err = 1 - mps_norm
-%	iter:				number of iterations in the optimization
+%	iter:				number of iterations in the update
 
 % Handle optional arguments
 if nargin < 6
 	max_storage_size = get_free_memory();
-	max_storage_size
 end
 if nargin < 5
 	tolerance = 1e-6;
@@ -72,8 +71,8 @@ for iter = 1:iter_max
 	for site = 1:(N-1)
 		% Apply MPO
 		target = mult(mpo{site},mps_in{site},site);
-		% Variational step
-		mps_out{site} = optimization_step(target,blocks{site},blocks{site+1});
+		% Optimization step
+		mps_out{site} = update_step(target,blocks{site},blocks{site+1});
 		% Canonize the new element
 		mps_out{site} = canonize_fast(mps_out{site},+1);
 		% Update current block
@@ -81,14 +80,14 @@ for iter = 1:iter_max
 	end
 	% Do same for last site, except update
 	target = mult(mpo{N},mps_in{N},N);
-	mps_out{N} = optimization_step(target,blocks{N},blocks{N+1});
+	mps_out{N} = update_step(target,blocks{N},blocks{N+1});
 	mps_out{N} = canonize_fast(mps_out{N},+1);
 	% Optimization sweep right -> left
 	for site = N:(-1):2
 		% Apply MPO
 		target = mult(mpo{site},mps_in{site},site);
 		% Optimization step
-		mps_out{site} = optimization_step(target,blocks{site},blocks{site+1});
+		mps_out{site} = update_step(target,blocks{site},blocks{site+1});
 		% Canonize the new element
 		mps_out{site} = canonize_fast(mps_out{site},-1);
 		% Update current block
@@ -97,7 +96,7 @@ for iter = 1:iter_max
 	end
 	% Do same for first site, and compute norm
 	target = mult(mpo{1},mps_in{1},1);
-	mps_out{1} = optimization_step(target,blocks{1},blocks{2});
+	mps_out{1} = update_step(target,blocks{1},blocks{2});
 	mps_out{1} = canonize_fast(mps_out{1},-1);
 	carryover = update_block(blocks{2},mps_out{1},[],target,-1);
 	mps_norm = abs(carryover);
@@ -110,9 +109,8 @@ for iter = 1:iter_max
 end
 end
 
-function new_guess = optimization_step(target,block_left,block_right)
-	new_guess = contract(block_right,2,2,target,3,2);
-	new_guess = contract(block_left,2,2,new_guess,3,2);
+function new_guess = update_step(target,block_left,block_right)
+	new_guess = ncon({block_left,target,block_right},{[-1,1],[1,2,-3],[-2,2]});
 end
 
 function bytes = predict_product_size(mpo,mps)
@@ -149,7 +147,6 @@ elseif ismac
 		bytes = str2num(r{1})*str2num(out);
 	end
 elseif isunix
-    mem=sscanf(out,'%f  free memory');
 	[s,out] = system('free -b| grep "Mem"');
 	r = regexp(out,'\d*','match');
 	if s == 0 & length(r) >= 3

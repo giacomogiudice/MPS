@@ -1,4 +1,5 @@
 function [nulltensor,C,carryover] = nullspace(M,direction)
+% Obtain the right or left nullspace of each tensor
 [D1,D2,d] = size(M);
 if direction == 1
 	Ddiff = D1*d - D2;

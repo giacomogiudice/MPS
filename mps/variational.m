@@ -54,7 +54,7 @@ if isfield(settings.initial,'mps')
 		growbond = true;
 	end
 else
-	mps = randomMPS(N,D_list(1),d,1,settings.isreal);
+	mps = randomMPS(N,D_list(1),d,-1,settings.isreal);
 end
 
 
@@ -144,6 +144,7 @@ for iter = 1:settings.maxit
 		end
 		% Solve the local problem
 		[mps{site},energy] = optimization_step(mps{site},fun,settings);
+		energy = real(energy);
 		% Canonize the new element
 		[mps{site},carryover] = canonize_fast(mps{site},-1);
 		% Compute block update

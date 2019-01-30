@@ -1,4 +1,4 @@
-function obs = expectationvalue(mps,obs_set,bounds)
+function obs = measure(mps,obs_set,bounds)
 % Computes expectation values of local observables for an MPS.
 % The behavior depends on which observables is desired. 
 
@@ -7,7 +7,7 @@ function obs = expectationvalue(mps,obs_set,bounds)
 % 				WARNING: Assumes right (-1) canonization
 %	obs_set:	behavior depends on what is provided. Possible options are:
 %				'correlationlength':	correlation length computed as the
-%										second largest eigenvalue of the 
+%										second  largest eigenvalue of the 
 %										transfer matrix
 %				{M}:					expectation value of a one-point
 %										observable M (d x d matrix)

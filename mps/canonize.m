@@ -1,4 +1,4 @@
-function [C,carryover] = canonize(M,direction,D_max,epsilon)
+function [C,carryover,S] = canonize(M,direction,D_max,epsilon)
 % Computes canonization of MPS site M according
 % to left- (direction == +1) or right- canonization (direction == -1).
 % It then optionally performs a decimation if two additional are specified
@@ -13,6 +13,7 @@ function [C,carryover] = canonize(M,direction,D_max,epsilon)
 % OUTPUT
 %	C:			MPS element canonized, A or B
 %	carryover:	product to multiply with next neighbor, S*V' or U*S
+% 	S:			diagona matrix containing the schmidt values
 
 % Handle optional arguments
 if nargin == 2

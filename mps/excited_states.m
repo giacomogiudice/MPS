@@ -9,8 +9,8 @@ function [mps_list,energies,iters,variances] = excited_states(guesses,mpo,M,vara
 %	varargin:		(optional) options to pass to 'projected_search'
 % OUTPUT
 %	mps_list:		cell array of resulting MPS eigenstates
-%	energies:	vector of eigenvalues of corresponding eigenstates		
-%	iters:		number of iterations used for each optimization
+%	energies:		vector of eigenvalues of corresponding eigenstates		
+%	iters:			number of iterations used for each optimization
 assert(M >= 1,'Number of desired states must be larger than zero.');
 N = length(mpo);
 d = size(mpo{1},4);

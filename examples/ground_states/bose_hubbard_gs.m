@@ -8,13 +8,11 @@
 clear
 
 %% Parameters
-N = 20;		% Number of sites
+N = 30;		% Number of sites
 d = 4;		% Truncation of the local Hilbert space (this is enough without changing mu)
 D = 20;		% Bond dimension
 mu = 0.5;	% Chemical potential, in units of U
-J = 0.1;	% Hopping strength, in units of J (transition around 0.2 for mu=0.5)
-precision = 1e-8;
-max_iter = 15;
+J = 0.2;	% Hopping strength, in units of J (transition around 0.2 for mu=0.5)
 
 % Local operators
 id = eye(d);
@@ -58,20 +56,23 @@ for site = 1:N
 end
 
 %% Do Optimization
-state = sweep(randomMPS(N,D,d,1),{},-1);
-[state,E,iter] = ground_search(state,H,max_iter,precision,true);
+settings.tolerance = 1e-8;
+settings.maxit = 15;
+[state,output] = variational(H,D,settings);
 
 %% Plot Observables
-n_particles = real(expectationvalue(occupation,state));
-g2 = real(expectationvalue(correlation,state))./(n_particles(mid_site).*n_particles);
+n_particles = real(expectationvalue(state,{a'*a}));
+g2 = abs(expectationvalue(state,{a',a},[mid_site,N]));
 
-figure
+figure(1)
 plot(1:N,n_particles,'s--');
 xlabel('$k$')
 ylabel('$\langle a^\dagger_k a_k \rangle$')
-xlim([0 d]);
-figure
 hold on
-plot(1:N,g2);
+
+figure(2)
+plot(mid_site:(N-1),g2);
 xlabel('$k$')
-ylabel('$g^2_{{\rm mid},k}$')
+ylabel('$|\langle a^\dagger_{\rm mid} a_k|$')
+set(gca,'yscale','log')
+hold on

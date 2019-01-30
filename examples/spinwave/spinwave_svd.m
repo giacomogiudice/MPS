@@ -31,7 +31,7 @@ else
 	U_even{N} = reshape(sigma.id,[1,1,d,d]);
 end
 % Do  compression to merge into a single operator
-U = compressMPO(U_odd,U_even,U_odd); 
+U = compressMPO({U_odd,U_even,U_odd}); 
 
 %% Build Initial State
 state = cell(1,N);
@@ -41,28 +41,18 @@ end
 state{1} = reshape([1,0],[1,1,d]);
 
 %% Create Observables
-identity = cell(1,N);
-magnetization = cell(N,N);
-for site = 1:N
-	identity{site} = reshape(sigma.id,[1 1 d d]);
-end
-for site = 1:N
-	magnetization(site,:) = identity;
-	magnetization{site,site} = reshape(sigma.z,[1,1,d,d]);
-end
-
 maxbond = @(s) max(cellfun(@(x) max(size(x,1),size(x,2)),s));
 
 %% Time Evolution
 magn_svd = zeros(N,time_steps);
 bond_svd = ones(1,time_steps);
 % Values for t=0
-magn_svd(:,1) = real(expectationvalue(magnetization,state));
+magn_svd(:,1) = real(expectationvalue(state,{sigma.z}));
 % Trotter-Suzuki order 2
 for step = 2:time_steps
 	state = sweep(state,U,1);
 	state = sweep(state,{},-1,D_max,epsilon);
-	magn_svd(:,step) = real(expectationvalue(magnetization,state));
+	magn_svd(:,step) = real(expectationvalue(state,{sigma.z}));
 	bond_svd(step) = maxbond(state);
 end
 

@@ -7,7 +7,7 @@ function mpo = reduceMPO(mpo_list,iter_max)
 %	mpo_list:	cell array of MPOs to combine (the order is important if
 %				they do not commute)
 % OUTPUT
-%	mpo:			MPO corresponding to the multiplication of all the input 
+%	mpo:		MPO corresponding to the multiplication of all the input 
 %				operators
 if nargin < 2
 	iter_max = 10;

@@ -12,9 +12,9 @@ function operator = expandMPO(mpo)
 N = length(mpo);
 d = size(mpo{1},3);
 
-block = permute(mpo{N},[1,3,4,2]);
+block = permute(mpo{N},[3,4,1,2]);
 for site = N-1:-1:1
-	block = ncon({block2,mpo{site}},{[-(1:2*(N-site)),1],[-(2*(N-site)+3),1,-(2*(N-site)+1),-(2*(N-site)+2)]});
+	block = ncon({block,mpo{site}},{[-(1:2*(N-site)),1],[-(2*(N-site)+3),1,-(2*(N-site)+1),-(2*(N-site)+2)]});
 end
 operator = reshape(permute(block,[1:2:2*N,2:2:2*N]),[d^N,d^N]);
 end

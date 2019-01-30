@@ -6,12 +6,14 @@ function s = iscanonized(mps,direction,tolerance)
 % INPUT
 %   mps:		cell-array of rank-3 tensors representing the MPS 
 %	direction:	specifies left (-1) or right (+1) canonization
-%	tolerance:	(optional) acceptable error in distance from identity
+%	tolerance:	(optional) acceptable error in canonical form. 
+%				The canonical form must be no further distant (in  
+%				Frobenius norm) to the identity than tol*D^2
 % OUTPUT
 %	s:			boolean which is set to true if condition is met
 
 if nargin == 2
-	tolerance = 1e-10;
+	tolerance = eps;
 	
 if ~iscell(mps)
 	error('Expected cell array as first argument');
@@ -32,7 +34,7 @@ end
 
 for site = ind
 	blk = update_block(blk,mps{site},{},mps{site},direction);
-	if norm(blk - eye(size(blk))) > tolerance
+	if norm(blk - eye(size(blk)),'fro') > tolerance*prod(size(blk))
 		s = false;
 		return
 	end

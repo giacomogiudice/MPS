@@ -14,16 +14,9 @@ N = length(mps_in);
 d = size(mps_in{1},3);
 mps_out = cell(1,N);
 
-bnd = zeros(2,N);
-first_half = floor(N/2);
-bnd(:,1:first_half) = [d.^((1:first_half)-1);d.^(1:first_half)];
-if mod(N,2)
-	first_half = first_half + 1;
-	bnd(:,first_half) = [d^(first_half-1);d^(first_half-1)];	
-end
-first_half = first_half + 1;
-bnd(:,first_half:N) = [d.^(N+1-(first_half:N));d.^(N-(first_half:N))];
-bnd = min(bnd,D_max);
+% Build matrix containing size of bond dimensions for the MPS
+n = 0:(N-1);
+bnd = min([min(d.^n,d.^(N-n));min(d.^(n+1),d.^(N-n-1))],D_max);
 
 % Construct output MPS
 for site = 1:N

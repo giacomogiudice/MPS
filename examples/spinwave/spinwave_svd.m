@@ -47,12 +47,12 @@ maxbond = @(s) max(cellfun(@(x) max(size(x,1),size(x,2)),s));
 magn_svd = zeros(N,time_steps);
 bond_svd = ones(1,time_steps);
 % Values for t=0
-magn_svd(:,1) = real(expectationvalue(state,{sigma.z}));
+magn_svd(:,1) = real(expectationvalue(state,sigma.z));
 % Trotter-Suzuki order 2
 for step = 2:time_steps
 	state = sweep(state,U,1);
 	state = sweep(state,{},-1,D_max,epsilon);
-	magn_svd(:,step) = real(expectationvalue(state,{sigma.z}));
+	magn_svd(:,step) = real(expectationvalue(state,sigma.z));
 	bond_svd(step) = maxbond(state);
 end
 

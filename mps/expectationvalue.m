@@ -29,9 +29,14 @@ else
 end
 assert((N_start < N_end) & (N_end <= N),'Bounds provided are not valid.');
 ind = 1;
-if ischar(obs_set)
-	obs = zeros(1,N_end-N_start+1);
+
+if isnumeric(obs_set)
+	obs_set = {obs_set};
+end
+
+if ischar(obs_set)	
 	if strcmp(obs_set,'correlationlength')
+		obs = zeros(1,N_end-N_start+1);
 		options.issym = false;
 		options.isreal = false;
 		for site = N_start:N_end
@@ -48,6 +53,8 @@ if ischar(obs_set)
 			obs(ind) = -1/log(abs(lambda));
 			ind = ind + 1;
 		end
+	else
+		error('Unrecognized observable type %s.',obs_set);
 	end
 elseif iscell(obs_set)
 	% Get fixed point up to N_start
@@ -55,7 +62,7 @@ elseif iscell(obs_set)
 	for site = 1:(N_start-1)
 		rho = update_block(rho,mps{site},{},mps{site},1);
 	end
-	% rho = rho/trace(rho);
+	rho = rho/trace(rho);
 	if length(obs_set) == 1
 		% One-point observables
 		obs = zeros(1,N_end-N_start+1);
@@ -80,7 +87,5 @@ elseif iscell(obs_set)
 	else
 		error('Only one-point and two-point correlators are supported.');
 	end
-else
-	error('Set of observables must be a string or a cell array.');
 end
 end

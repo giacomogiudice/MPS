@@ -1,7 +1,7 @@
 % This script creates the MPO Hamiltonian corresponding to the Bose-Hubbard
 % model. The ground state of this system is them found through variational
 % optimization. Once this is complete, properties of this ground state are
-% plotted, such as the occupation number and the g2 correlation function.
+% plotted, such as the occupation number and the correlation correlation function.
 % Try changing J from 0.1 to 0.5 to observe the transition from Mott 
 % insulator to superfluid.
 %% Wipe Everything And Get Parameters
@@ -36,33 +36,15 @@ for i = 2:N-1
 end
 H{N} = W(:,1,:,:);
 
-%% Create Observables
-identity = cell(1,N);
-occupation = cell(N,N);
-correlation = cell(N,N);
-for site = 1:N
-    identity{site} = reshape(id,[1 1 d d]);
-end
-mid_site = ceil(N/2);
-for site = 1:N
-	occupation(site,:) = identity;
-	occupation{site,site} = reshape(a'*a,[1 1 d d]);
-	if site == mid_site
-    	correlation{site,mid_site} = reshape(a'*(a'*a)*a,[1 1 d d]);
-    else
-		correlation{site,mid_site} = reshape(a'*a,[1 1 d d]);
-		correlation{site,site} = reshape(a'*a,[1 1 d d]);
-	end
-end
-
 %% Do Optimization
 settings.tolerance = 1e-8;
 settings.maxit = 15;
 [state,output] = variational(H,D,settings);
 
 %% Plot Observables
+mid_site = ceil(N/2);
 n_particles = real(expectationvalue(state,{a'*a}));
-g2 = abs(expectationvalue(state,{a',a},[mid_site,N]));
+correlation = abs(expectationvalue(state,{a',a},[mid_site,N]));
 
 figure(1)
 plot(1:N,n_particles,'s--');
@@ -71,7 +53,7 @@ ylabel('$\langle a^\dagger_k a_k \rangle$')
 hold on
 
 figure(2)
-plot(mid_site:(N-1),g2);
+plot(mid_site:(N-1),correlation);
 xlabel('$k$')
 ylabel('$|\langle a^\dagger_{\rm mid} a_k|$')
 set(gca,'yscale','log')

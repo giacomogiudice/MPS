@@ -36,12 +36,12 @@ state = padMPS(state,D_static,-1);
 %% Time Evolution
 magn_tdvp = zeros(N,time_steps);
 % Values for t=0
-magn_tdvp(:,1) = real(expectationvalue(state,{sigma.z}));
+magn_tdvp(:,1) = real(expectationvalue(state,sigma.z));
 % Trotter-Suzuki order 2
 for step = 2:time_steps
 	state = padMPS(state,D_static,-1);
 	state = tdvp_step(state,H,dt);
-	magn_tdvp(:,step) = real(expectationvalue(state,{sigma.z}));
+	magn_tdvp(:,step) = real(expectationvalue(state,sigma.z));
 end
 
 %% Save To File

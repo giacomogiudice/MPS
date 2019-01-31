@@ -52,12 +52,12 @@ compression_iter = zeros(1,time_steps);
 
 % Values for t=0
 state = sweep(state,{},-1);
-magn_iter(:,1) = real(expectationvalue(state,{sigma.z}));
+magn_iter(:,1) = real(expectationvalue(state,sigma.z));
 
 % Trotter-Suzuki order 2
 for step = 2:time_steps
 	[state,state_norm,iter] = sweep_iter(state,U,randomMPS(N,D_static,d,1),iter_max,tolerance);
-	magn_iter(:,step) = real(expectationvalue(state,{sigma.z}));
+	magn_iter(:,step) = real(expectationvalue(state,sigma.z));
 	compression_err(step) = abs(1 - state_norm);
 	compression_iter(step) = iter;
 end

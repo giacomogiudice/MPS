@@ -42,7 +42,7 @@ H{N} = W(:,1,:,:);
 [state,output] = variational(H,D);
 
 %% Plot Observables
-magn = real(expectationvalue(state,{sz}));
+magn = real(expectationvalue(state,sz));
 corr_zz = real(expectationvalue(state,{sz,sz}));
 
 figure(1)

@@ -49,7 +49,7 @@ end
 
 % Arnoldi exponential approximation
 for step = 2:time_steps
-	state = exp_arnoldi(state,@(v) -1i*(H*v),dt,4,1e-4);
+	state = exp_arnoldi(state,@(v) -1i*(H*v),dt);
 	state = state/norm(state);
 	for site = 1:N
 		magn_conventional(site,step) = state'*magnetization{site}*state;

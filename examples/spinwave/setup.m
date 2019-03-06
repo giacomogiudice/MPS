@@ -8,10 +8,10 @@ filename = 'workspaces/spinwave.mat';
 
 %% Simulation Parameters
 
-D_max = 10;			% Maximum bond dimension for SVD
+D_max = 16;			% Maximum bond dimension for SVD
 epsilon = 1e-6;		% Truncation error for SVD (sum of the square of the singular values to discart)
-iter_max = 100;		% Maximum number of iterative sweeps
-D_static = 2;		% Fixed bond dimension for iterative compression and TDVP
+iter_max = 10;		% Maximum number of iterative sweeps
+D_static = 8;		% Fixed bond dimension for iterative compression and TDVP
 tolerance = 1e-4;	% Tolerance for iterative compression
 
 % Other Data Structures

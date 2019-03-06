@@ -19,8 +19,7 @@ N = length(mps);
 dt_half = dt/2;
 
 % Choice of the integrator to be used. Can try using 'RK4_step' instead
-integrator = @exp_arnoldi; 
-
+integrator = @(v,f,t) exp_arnoldi(v,f,t,8); % integrator = @RK4_step;
 % Initialize block storage
 blocks = cell(1,N+1);
 blocks{1} = 1;

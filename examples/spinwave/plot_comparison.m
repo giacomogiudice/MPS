@@ -19,17 +19,17 @@ end
 if exist('magn_svd','var')
 	disp('Data for SVD evolution found...')
 	profiles{end+1} = magn_svd;
-	legend_str{end+1} = 'ST2 via SVD compression';
+	legend_str{end+1} = 'ST2 (SVD)';
 end
 if exist('magn_iter','var')
 	disp('Data for iterative evolution found...')
 	profiles{end+1} = magn_iter;
-	legend_str{end+1} = 'ST2 via iterative compression';
+	legend_str{end+1} = 'ST2 (iterative)';
 end
 if exist('magn_tdvp','var')
 	disp('Data for TDVP found...')
 	profiles{end+1} = magn_tdvp;
-	legend_str{end+1} = 'Time-dependent variational';
+	legend_str{end+1} = 'TDVP';
 end
 
 if isempty(profiles)

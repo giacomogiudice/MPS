@@ -48,8 +48,9 @@ for j = 1:m
 		work = work - hessenberg(k,j)*krylov{k};
 	end
 	hessenberg(j+1,j) = sqrt(scalar_product(work,work));
-	if hessenberg(j+1,j) < tolerance
-		% Happy ending, the precision is sufficient 
+	if hessenberg(j+1,j) < tolerance*numel(v_in)
+		% Happy ending, the precision is sufficient
+		% Here we assume that the matrix has a 1-norm that is around D^2*d
 		mred = j;
 		break
 	end

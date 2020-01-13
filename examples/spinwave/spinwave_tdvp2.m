@@ -20,30 +20,31 @@ W(5,5,:,:) = sigma.id;
 H = cell(1,N);
 H{1} = W(D_O,:,:,:);
 for i = 2:N-1
-	H{i} = W;
+    H{i} = W;
 end
 H{N} = W(:,1,:,:);
 
 %% Build Initial State
 state = cell(1,N);
 for site = 1:N
-	state{site} = reshape([0,1],[1,1,d]);
+    state{site} = reshape([0,1],[1,1,d]);
 end
 state{1} = reshape([1,0],[1,1,d]);
 state{2} = reshape([1,0],[1,1,d]);
 % Pad state
-state = padMPS(state,D_static,-1);
+state = sweep(state,{},-1);
+% state = padMPS(state,D_static,-1);
 
 %% Time Evolution
-magn_tdvp = zeros(N,time_steps);
+magn_tdvp2 = zeros(N,time_steps);
 % Values for t=0
-magn_tdvp(:,1) = real(expectationvalue(state,sigma.z));
+magn_tdvp2(:,1) = real(expectationvalue(state,sigma.z));
 % Trotter-Suzuki order 2
 for step = 2:time_steps
-	state = padMPS(state,D_static,-1);
-	state = tdvp_step(state,H,-1i*dt);
-	magn_tdvp(:,step) = real(expectationvalue(state,sigma.z));
+    state = tdvp2_step(state,H,-1i*dt,D_static,eps);
+    state
+    magn_tdvp2(:,step) = real(expectationvalue(state,sigma.z));
 end
 
 %% Save To File
-save(filename,'magn_tdvp','-append');
+save(filename,'magn_tdvp2','-append');

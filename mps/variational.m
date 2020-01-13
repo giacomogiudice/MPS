@@ -71,7 +71,7 @@ energy_prev = update_block(blocks{2},mps{1},mpo{1},mps{1},-1);
 N_orth = 0;
 if ~isempty(settings.orthogonalize)
 	mps_list = settings.orthogonalize;
-	N_orth = length(mps_list);
+	N_orth = size(mps_list,1);
 	orth_blocks = cell(N_orth,N+1);
 	for m = 1:N_orth
 		orth_blocks{m,1} = 1;
@@ -81,7 +81,6 @@ if ~isempty(settings.orthogonalize)
 		end
 	end
 end
-
 if settings.verbose
 	fprintf('Iter\t      Energy\t Energy Diff\tLap Time [s]\tBond Dim\n')
 end

@@ -1,4 +1,4 @@
-% This script runs the time-evolution of the Heisenberg model with 
+% This script runs the time-evolution of the Heisenberg model with
 % conventional matrix-vector operations. This is the only routine that does
 % not use Matrix Product States (MPS). Because of the exponential increase
 % in Hilbert space this method is limited to small (<20) systems.
@@ -29,7 +29,11 @@ end
 %% Build the Initial State
 state = [1;0];
 for site = 2:N
-	state = kron(state,[0;1]);
+	if site == 2
+		state = kron(state,[1;0]);
+	else
+		state = kron(state,[0;1]);
+	end
 end
 
 %% Build The Magnetization Observable
@@ -49,7 +53,7 @@ end
 
 % Arnoldi exponential approximation
 for step = 2:time_steps
-	state = exp_arnoldi(state,@(v) -1i*(H*v),dt);
+	state = expmv(-1i*dt,H,state);
 	state = state/norm(state);
 	for site = 1:N
 		magn_conventional(site,step) = state'*magnetization{site}*state;

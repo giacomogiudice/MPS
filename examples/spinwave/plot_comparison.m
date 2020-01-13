@@ -1,5 +1,5 @@
 % This script plots the comparison of the different methods for the same time
-% step. Please run some of the simulations 'heisenberg_*' with the same 
+% step. Please run some of the simulations 'heisenberg_*' with the same
 % parameters before comparing. The data of these simulations is expected
 % to be stored in 'filename'.
 
@@ -12,7 +12,7 @@ load(filename);
 profiles = {};
 legend_str = {};
 if exist('magn_conventional','var')
-	disp('Data for onventional evolution found...')
+	disp('Data for conventional evolution found...')
 	profiles{end+1} = magn_conventional;
 	legend_str{end+1} = 'Conventional';
 end
@@ -31,6 +31,11 @@ if exist('magn_tdvp','var')
 	profiles{end+1} = magn_tdvp;
 	legend_str{end+1} = 'TDVP';
 end
+if exist('magn_tdvp2','var')
+	disp('Data for TDVP2 evolution found...')
+	profiles{end+1} = magn_tdvp2;
+	legend_str{end+1} = 'TDVP2';
+end
 
 if isempty(profiles)
 	disp('Please run some simulations first!')
@@ -42,7 +47,7 @@ sites = 1:N;
 hold on
 for k = 1:length(profiles)
 	handles(k) = plot(sites,profiles{k}(:,1));
-end 
+end
 legend(legend_str);
 xlabel('sites')
 ylabel('magnetization')
@@ -51,5 +56,5 @@ for step = 1:time_steps
 	pause(1/16)
 	for k = 1:length(profiles)
 		set(handles(k),'YData',profiles{k}(:,step));
-	end 
+	end
 end

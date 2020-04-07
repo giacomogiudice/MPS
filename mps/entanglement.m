@@ -27,7 +27,7 @@ switch direction
 			[M,carryover,schmidt] = canonize(M,-1,max(size(M,1),size(M,2)));
 			S{site-1} = diag(schmidt);
 			E(site-1) = -sum(S{site-1}.^2.*log(S{site-1}.^2));
-			M = ncon({mps{site+1},carryover},{[-1,1,-3],[1,-2]});
+			M = ncon({mps{site-1},carryover},{[-1,1,-3],[1,-2]});
 		end
 end
 end

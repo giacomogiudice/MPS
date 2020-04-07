@@ -2,26 +2,26 @@ function [mps,output,mps_left] = variational(mpo,D_list,settings)
 % Performs single-site DMRG, by variationally finding an MPS approximation
 % of the state which minimizes (or optionally maximizes) of the function
 % <mps|mpo|mps>/<mps|mps>. The behavior can be tuned by passing a settings
-% struct, see 'variational_settings.m'. In order too change a default 
+% struct, see 'variational_settings.m'. In order too change a default
 % setting, simply create a structure with the settings you wish to change,
 % and pass it as an argument. The algorithm should converge towards a local
-% extremum, bu convergence towards a global minimum is not guaranteed. 
+% extremum, bu convergence towards a global minimum is not guaranteed.
 % If the algorithm has difficulties converging, the precision might be too
 % demanding or the bond dimension might be too low.
 %
 % INPUT
-%	mpo:		cell array corresponding to MPO, assumed to be Hermitian           
-%	D_list:		array corresponding to the bond dimensions to use for the 
-%				variational MPS. The routine will automatically increase 
+%	mpo:		cell array corresponding to MPO, assumed to be Hermitian
+%	D_list:		array corresponding to the bond dimensions to use for the
+%				variational MPS. The routine will automatically increase
 %				the bond dimension of the guess so that the final MPS will
-%				have a bond dimension corresponding to the last entry of 
-%				this array. The bond dimension is increased at 
+%				have a bond dimension corresponding to the last entry of
+%				this array. The bond dimension is increased at
 %				logarithmically-spaced steps between 1 and settings.tol.
 %				(WARNING: The array should be in ascending order).
 %	settings:	structure corresponding to the options for the routine
 % OUTPUT
 %	mps:		approximation of the eigenstate in right canonization (-1)
-%	output:		approximation of the smallest real eigenvalue		
+%	output:		approximation of the smallest real eigenvalue
 %	mps_left:	approximation of the eigenstate in left canonization (+1)
 
 % Extract settings
@@ -109,7 +109,7 @@ for iter = 1:settings.maxit
 			% Left and right environment
 			G_left = update_block(blocks{site},N_left,mpo{site},mps{site},+1);
 			G_right = update_block(blocks{site+2},N_right,mpo{site+1},mps{site+1},-1);
-			% Contract environments and compute SVD 
+			% Contract environments and compute SVD
 			M = ncon({G_left,G_right},{[-1,1,2],[-2,1,2]});
 			[U,~,~] = svd(M);
 			D_next = size(mps{site+1},2);

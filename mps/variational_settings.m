@@ -1,18 +1,18 @@
 function settings = variational_settings(custom_settings)
 % This function creates a struct corresponding to the settings that are
 % passed to 'variational.m'. Optional settings are passed to this function
-% and it completes the struct with the default settings. 
+% and it completes the struct with the default settings.
 % The list of valid fields one can pass include:
 %	maxit 			Maximum numer of iterations
-% 	tol:			halting tolerance, i.e. when 
-%					|energy[k] - energy[k-1]| < precision*max(|energy[k]|,1) 
-% 	isreal:			constrain the tensors to be real (not tested)
+% 	tol:			halting tolerance, i.e. when
+%					|energy[k] - energy[k-1]| < precision*max(|energy[k]|,1)
+% 	isreal:			constrain the tensors to be real
 % 	verbose: 		print output at each iteration
-% 	initial: 		structure containing the initial guess. An MPS should 
+% 	initial: 		structure containing the initial guess. An MPS should
 %					be provided in settings.initial.mps
-%					(WARNING: all elements must be left (+1) canonized!) 
+%					(WARNING: all elements must be left (+1) canonized!)
 % 	orthogonalize: 	cell array of MPS that should be orthogonal to the optimized MPS.
-%					(WARNING: all elements must be left canonized!)  
+%					(WARNING: all elements must be left canonized!)
 % 	eigsolver:		structure of options for the eigensolver. This includes:
 %					eigsolver.handle:	function pointer to eigensolver ('eigs' by default)
 %					eigsolver.mode:		search for smallest or largest eigenvalue
@@ -40,13 +40,18 @@ settings.eigsolver.options = struct;
 if nargin == 1
 	settings = mergestruct(settings,custom_settings);
 end
-% Update eigsolver settings for real matrices
+% Set eigsolver options for the case of 'eigs'
 if isequal(settings.eigsolver.handle,@eigs)
-	settings.eigsolver.options.issym = true;
-	settings.eigsolver.options.isreal = false;
-	if settings.isreal 
+	if isempty(fieldnames(settings.eigsolver.options))
+		% The following option seems to make convergence slower in MATLAB > R2017b
+		% settings.eigsolver.options.issym = true;
+		settings.eigsolver.options.isreal = false;
+	end
+	if settings.isreal
 		settings.eigsolver.options.isreal = true;
-		settings.eigsolver.mode = 'SA';
+		if settings.eigsolver.mode == 'SR'
+			settings.eigsolver.mode = 'SA';
+		end
 	end
 end
 % Do some minimal checks
@@ -63,6 +68,6 @@ function defaults = mergestruct(defaults,mods)
 			defaults.(l) = mergestruct(defaults.(l),mods.(l));
 		else
 			defaults.(l) = mods.(l);
-		end			
+		end
 	end
 end
